@@ -1,12 +1,16 @@
 package com.android.pobla.popularmovies.model;
 
 
+import android.net.Uri;
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.google.gson.annotations.SerializedName;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class Movie {
+public class Movie implements Parcelable{
 
   @SerializedName("vote_count")
   private int voteCount;
@@ -209,5 +213,74 @@ public class Movie {
     result = 31 * result + (overview != null ? overview.hashCode() : 0);
     result = 31 * result + (releaseDate != null ? releaseDate.hashCode() : 0);
     return result;
+  }
+
+  @Override
+  public int describeContents() {
+    return 0;
+  }
+
+  @Override
+  public void writeToParcel(Parcel dest, int flags) {
+    dest.writeInt(this.voteCount);
+    dest.writeInt(this.id);
+    dest.writeValue(this.video);
+    dest.writeValue(this.voteAverage);
+    dest.writeString(this.title);
+    dest.writeValue(this.popularity);
+    dest.writeString(this.posterPath);
+    dest.writeString(this.originalLanguage);
+    dest.writeString(this.originalTitle);
+    dest.writeList(this.genreIds);
+    dest.writeString(this.backdropPath);
+    dest.writeValue(this.adult);
+    dest.writeString(this.overview);
+    dest.writeString(this.releaseDate);
+  }
+
+  public Movie() {
+  }
+
+  protected Movie(Parcel in) {
+    this.voteCount = in.readInt();
+    this.id = in.readInt();
+    this.video = (Boolean) in.readValue(Boolean.class.getClassLoader());
+    this.voteAverage = (Double) in.readValue(Double.class.getClassLoader());
+    this.title = in.readString();
+    this.popularity = (Double) in.readValue(Double.class.getClassLoader());
+    this.posterPath = in.readString();
+    this.originalLanguage = in.readString();
+    this.originalTitle = in.readString();
+    this.genreIds = new ArrayList<Integer>();
+    in.readList(this.genreIds, Integer.class.getClassLoader());
+    this.backdropPath = in.readString();
+    this.adult = (Boolean) in.readValue(Boolean.class.getClassLoader());
+    this.overview = in.readString();
+    this.releaseDate = in.readString();
+  }
+
+  public static final Creator<Movie> CREATOR = new Creator<Movie>() {
+    @Override
+    public Movie createFromParcel(Parcel source) {
+      return new Movie(source);
+    }
+
+    @Override
+    public Movie[] newArray(int size) {
+      return new Movie[size];
+    }
+  };
+
+  public static class Sizes {
+
+  }
+
+  private static final String IMAGE_DB_BASE_URL = "https://image.tmdb.org/t/p";
+
+  public String getImageUrlWithSize(MovieSizes sizes) {
+    return Uri.parse(IMAGE_DB_BASE_URL).buildUpon()
+      .appendEncodedPath(sizes.getSizePath())
+      .appendEncodedPath(getPosterPath())
+      .toString();
   }
 }

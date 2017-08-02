@@ -1,6 +1,7 @@
 package com.android.pobla.popularmovies.main;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
@@ -9,6 +10,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.android.pobla.popularmovies.R;
+import com.android.pobla.popularmovies.detail.MovieDetailActivity;
 import com.android.pobla.popularmovies.main.presenter.MainViewPresenter;
 import com.android.pobla.popularmovies.main.presenter.MainViewPresenterImpl;
 import com.android.pobla.popularmovies.main.view.MainView;
@@ -17,7 +19,7 @@ import com.android.pobla.popularmovies.model.Movie;
 
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements MainView {
+public class MainActivity extends AppCompatActivity implements MainView, MainViewAdapter.ItemClickListener{
 
   MainViewPresenter presenter;
   MainViewAdapter mainViewAdapter;
@@ -31,7 +33,7 @@ public class MainActivity extends AppCompatActivity implements MainView {
     setContentView(R.layout.activity_main);
     presenter = new MainViewPresenterImpl(this);
 
-    mainViewAdapter = new MainViewAdapter();
+    mainViewAdapter = new MainViewAdapter(this);
     movieGrid = (RecyclerView) findViewById(R.id.recycleView_main_movieGrid);
     movieGrid.setLayoutManager(new GridLayoutManager(this, 3));
     movieGrid.setAdapter(mainViewAdapter);
@@ -80,6 +82,13 @@ public class MainActivity extends AppCompatActivity implements MainView {
     progressDialog.setTitle(getString(R.string.main_title_loading));
     progressDialog.setMessage(getString(R.string.main_loading_message));
     progressDialog.show();
+
+  }
+
+  @Override
+  public void onItemClick(Movie movie) {
+    Intent intent = MovieDetailActivity.buildIntent(this, movie);
+    startActivity(intent);
 
   }
 }
