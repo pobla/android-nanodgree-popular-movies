@@ -1,4 +1,7 @@
 <resources>
   <string name="app_name">Popular Movies</string>
-  <string name="Refresh">Refresh movies</string>
+  <string name="mainMenu_topRated">Top Rated</string>
+  <string name="mainMenu_mostPopular">Most Popular</string>
+  <string name="main_title_loading">Loading movies</string>
+  <string name="main_loading_message">Refreshing content, please wait.</string>
 </resources>

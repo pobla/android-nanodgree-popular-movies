@@ -8,4 +8,8 @@ import java.util.List;
 public interface MainView {
 
   void showMovies(List<Movie> movies);
+
+  void cancelLoadingDialog();
+
+  void showLoadingDialog();
 }

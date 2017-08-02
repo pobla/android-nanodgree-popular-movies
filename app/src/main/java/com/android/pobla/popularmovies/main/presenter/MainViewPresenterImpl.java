@@ -20,8 +20,9 @@ import java.net.URLConnection;
 public class MainViewPresenterImpl implements MainViewPresenter {
 
   private static final String UTF_8 = "UTF-8";
-  private final String TOP_RATED = "top_rated";
   private final String MOVIES_DB_BASE_URL = "https://api.themoviedb.org/3/movie";
+  private final String TOP_RATED = "top_rated";
+  private final String POPULARITY = "popular";
   private final String API_KEY = "api_key";
 
   private final MainView mainView;
@@ -33,34 +34,17 @@ public class MainViewPresenterImpl implements MainViewPresenter {
   }
 
   @Override
-  public void refreshContent() {
-    URL url = buildUrl(TOP_RATED);
+  public void refreshMoviesByPopularity() {
+    doRefresh(buildUrl(POPULARITY));
+  }
 
-    new AsyncTask<URL, Void, MoviesResponse>() {
-      @Override
-      protected MoviesResponse doInBackground(URL... params) {
-        URL url = params[0];
-        try {
-          URLConnection urlConnection = url.openConnection();
-          InputStream content = (InputStream) urlConnection.getContent();
-          return gsonMapper.fromJson(new InputStreamReader(content, UTF_8), MoviesResponse.class);
-        } catch (IOException e) {
-          e.printStackTrace();
-        }
-        return null;
+  @Override
+  public void refreshMoviesByRate() {
+    doRefresh(buildUrl(TOP_RATED));
+  }
 
-      }
-
-      @Override
-      protected void onPostExecute(MoviesResponse moviesResponse) {
-        super.onPostExecute(moviesResponse);
-        if (moviesResponse != null && moviesResponse.getResults() != null) {
-          mainView.showMovies(moviesResponse.getResults());
-        }
-
-      }
-    }.execute(url);
-
+  private void doRefresh(URL url) {
+    new RetrieveMoviesAsynTasks().execute(url);
   }
 
   private URL buildUrl(String path) {
@@ -74,5 +58,38 @@ public class MainViewPresenterImpl implements MainViewPresenter {
       Log.i(this.getClass().toString(), "Error parsing url", e);
     }
     return null;
+  }
+
+  private class RetrieveMoviesAsynTasks extends AsyncTask<URL, Void, MoviesResponse> {
+
+    @Override
+    protected void onPreExecute() {
+      super.onPreExecute();
+      mainView.showLoadingDialog();
+    }
+
+    @Override
+    protected MoviesResponse doInBackground(URL... params) {
+      URL url = params[0];
+      try {
+        URLConnection urlConnection = url.openConnection();
+        InputStream content = (InputStream) urlConnection.getContent();
+        return gsonMapper.fromJson(new InputStreamReader(content, UTF_8), MoviesResponse.class);
+      } catch (IOException e) {
+        e.printStackTrace();
+      }
+      return null;
+
+    }
+
+    @Override
+    protected void onPostExecute(MoviesResponse moviesResponse) {
+      super.onPostExecute(moviesResponse);
+      mainView.cancelLoadingDialog();
+      if (moviesResponse != null && moviesResponse.getResults() != null) {
+        mainView.showMovies(moviesResponse.getResults());
+      }
+
+    }
   }
 }

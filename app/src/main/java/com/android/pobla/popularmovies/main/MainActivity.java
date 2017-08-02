@@ -1,12 +1,12 @@
 package com.android.pobla.popularmovies.main;
 
+import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.Toast;
 
 import com.android.pobla.popularmovies.R;
 import com.android.pobla.popularmovies.main.presenter.MainViewPresenter;
@@ -23,6 +23,7 @@ public class MainActivity extends AppCompatActivity implements MainView {
   MainViewAdapter mainViewAdapter;
 
   RecyclerView movieGrid;
+  private ProgressDialog progressDialog;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -34,6 +35,7 @@ public class MainActivity extends AppCompatActivity implements MainView {
     movieGrid = (RecyclerView) findViewById(R.id.recycleView_main_movieGrid);
     movieGrid.setLayoutManager(new GridLayoutManager(this, 3));
     movieGrid.setAdapter(mainViewAdapter);
+    presenter.refreshMoviesByRate();
   }
 
 
@@ -45,18 +47,39 @@ public class MainActivity extends AppCompatActivity implements MainView {
 
   @Override
   public boolean onOptionsItemSelected(MenuItem item) {
-    if (R.id.action_refresh == item.getItemId()) {
-      presenter.refreshContent();
-      return true;
-    } else {
-      return super.onOptionsItemSelected(item);
+    switch (item.getItemId()) {
+      case R.id.action_popularity:
+        presenter.refreshMoviesByPopularity();
+        item.setChecked(true);
+        return true;
+      case R.id.action_rated:
+        presenter.refreshMoviesByRate();
+        item.setChecked(true);
+        return true;
+      default:
+        return super.onOptionsItemSelected(item);
     }
   }
 
   @Override
   public void showMovies(List<Movie> movies) {
-    Toast.makeText(this, String.format("Showing %d movies", movies.size()), Toast.LENGTH_SHORT).show();
     mainViewAdapter.setMovies(movies);
+
+  }
+
+  @Override
+  public void cancelLoadingDialog() {
+    if (progressDialog != null){
+      progressDialog.cancel();
+    }
+  }
+
+  @Override
+  public void showLoadingDialog() {
+    progressDialog = new ProgressDialog(this);
+    progressDialog.setTitle(getString(R.string.main_title_loading));
+    progressDialog.setMessage(getString(R.string.main_loading_message));
+    progressDialog.show();
 
   }
 }
