@@ -6,7 +6,7 @@ import android.os.AsyncTask;
 import android.util.Log;
 
 import com.android.pobla.popularmovies.BuildConfig;
-import com.android.pobla.popularmovies.main.MainView;
+import com.android.pobla.popularmovies.main.view.MainView;
 import com.android.pobla.popularmovies.model.MoviesResponse;
 import com.google.gson.Gson;
 
@@ -16,10 +16,10 @@ import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.Map;
 
 public class MainViewPresenterImpl implements MainViewPresenter {
 
+  private static final String UTF_8 = "UTF-8";
   private final String TOP_RATED = "top_rated";
   private final String MOVIES_DB_BASE_URL = "https://api.themoviedb.org/3/movie";
   private final String API_KEY = "api_key";
@@ -43,11 +43,20 @@ public class MainViewPresenterImpl implements MainViewPresenter {
         try {
           URLConnection urlConnection = url.openConnection();
           InputStream content = (InputStream) urlConnection.getContent();
-          return gsonMapper.fromJson(new InputStreamReader(content, "UTF-8"), MoviesResponse.class);
+          return gsonMapper.fromJson(new InputStreamReader(content, UTF_8), MoviesResponse.class);
         } catch (IOException e) {
           e.printStackTrace();
         }
         return null;
+
+      }
+
+      @Override
+      protected void onPostExecute(MoviesResponse moviesResponse) {
+        super.onPostExecute(moviesResponse);
+        if (moviesResponse != null && moviesResponse.getResults() != null) {
+          mainView.showMovies(moviesResponse.getResults());
+        }
 
       }
     }.execute(url);
