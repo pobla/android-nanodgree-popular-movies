@@ -7,4 +7,5 @@
   <string name="title_activity_movie_detail">MovieDetailActivity</string>
   <string name="detail_releaseDate">Release date</string>
   <string name="detail_userRating">User rating</string>
+  <string name="detail_description_image_poster">Image Poster</string>
 </resources>

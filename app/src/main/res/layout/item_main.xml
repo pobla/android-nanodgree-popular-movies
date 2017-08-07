@@ -10,6 +10,7 @@
     android:id="@+id/imageView_main_moviePoster"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:contentDescription="@string/detail_description_image_poster"
     />
 
   <TextView
