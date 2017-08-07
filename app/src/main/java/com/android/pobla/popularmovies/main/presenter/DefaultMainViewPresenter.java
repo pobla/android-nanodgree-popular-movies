@@ -88,6 +88,8 @@ public class DefaultMainViewPresenter implements MainViewPresenter {
       mainView.cancelLoadingDialog();
       if (moviesResponse != null && moviesResponse.getResults() != null) {
         mainView.showMovies(moviesResponse.getResults());
+      }else{
+        mainView.showEmptyView();
       }
 
     }

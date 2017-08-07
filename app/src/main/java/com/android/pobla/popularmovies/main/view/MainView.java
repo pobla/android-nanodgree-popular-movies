@@ -12,4 +12,7 @@ public interface MainView {
   void cancelLoadingDialog();
 
   void showLoadingDialog();
+
+  void showEmptyView();
+
 }

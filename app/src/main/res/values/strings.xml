@@ -8,4 +8,6 @@
   <string name="detail_releaseDate">Release date</string>
   <string name="detail_userRating">User rating</string>
   <string name="detail_description_image_poster">Image Poster</string>
+  <string name="main_no_connection">Looks like there is an issue with the network, please check and try again</string>
+  <string name="mainMenu_refresh">Refresh</string>
 </resources>
