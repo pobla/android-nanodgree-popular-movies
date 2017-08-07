@@ -10,9 +10,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.android.pobla.popularmovies.R;
-import com.android.pobla.popularmovies.detail.MovieDetailActivity;
+import com.android.pobla.popularmovies.detail.view.MovieDetailActivity;
 import com.android.pobla.popularmovies.main.presenter.MainViewPresenter;
-import com.android.pobla.popularmovies.main.presenter.MainViewPresenterImpl;
+import com.android.pobla.popularmovies.main.presenter.DefaultMainViewPresenter;
 import com.android.pobla.popularmovies.main.view.MainView;
 import com.android.pobla.popularmovies.main.view.MainViewAdapter;
 import com.android.pobla.popularmovies.model.Movie;
@@ -31,7 +31,7 @@ public class MainActivity extends AppCompatActivity implements MainView, MainVie
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_main);
-    presenter = new MainViewPresenterImpl(this);
+    presenter = new DefaultMainViewPresenter(this);
 
     mainViewAdapter = new MainViewAdapter(this);
     movieGrid = (RecyclerView) findViewById(R.id.recycleView_main_movieGrid);

@@ -6,6 +6,7 @@
   android:layout_width="match_parent"
   android:layout_height="match_parent"
   app:layout_behavior="@string/appbar_scrolling_view_behavior"
+  android:layout_margin="@dimen/fab_margin"
   tools:context="com.android.pobla.popularmovies.detail.MovieDetailActivity"
   tools:showIn="@layout/activity_movie_detail">
 
@@ -14,6 +15,8 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:weightSum="10"
+    tools:layout_editor_absoluteX="8dp"
+    tools:layout_editor_absoluteY="8dp"
     tools:showIn="@layout/activity_movie_detail">
 
     <ImageView
@@ -23,11 +26,66 @@
       android:layout_weight="5"
       />
 
+    <LinearLayout
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_weight="0.5"
+      android:orientation="horizontal"
+      android:weightSum="2"
+      >
+
+      <TextView
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:text="@string/detail_releaseDate"
+        android:textStyle="bold"
+        />
+
+      <TextView
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:text="@string/detail_userRating"
+        android:textStyle="bold"
+        />
+    </LinearLayout>
+
+    <LinearLayout
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_weight="0.5"
+      android:orientation="horizontal"
+      android:weightSum="2"
+      >
+
+      <TextView
+        android:id="@+id/textView_detail_releaseDate"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:gravity="center"
+        />
+
+      <TextView
+        android:id="@+id/textView_detail_userRating"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:gravity="center"
+        />
+
+
+    </LinearLayout>
+
     <TextView
       android:id="@+id/textView_detail_moviePlot"
       android:layout_width="match_parent"
       android:layout_height="0dp"
-      android:layout_weight="5"
+      android:layout_weight="4"
+      android:textAlignment="center"
 
       />
 

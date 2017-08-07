@@ -17,7 +17,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 
-public class MainViewPresenterImpl implements MainViewPresenter {
+public class DefaultMainViewPresenter implements MainViewPresenter {
 
   private static final String UTF_8 = "UTF-8";
   private final String MOVIES_DB_BASE_URL = "https://api.themoviedb.org/3/movie";
@@ -29,7 +29,7 @@ public class MainViewPresenterImpl implements MainViewPresenter {
 
   private final Gson gsonMapper = new Gson();
 
-  public MainViewPresenterImpl(MainView mainView) {
+  public DefaultMainViewPresenter(MainView mainView) {
     this.mainView = mainView;
   }
 
