@@ -11,8 +11,8 @@
   tools:showIn="@layout/activity_movie_detail">
 
   <LinearLayout
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_width="0dp"
+    android:layout_height="0dp"
     android:orientation="vertical"
     android:weightSum="10"
     app:layout_constraintBottom_toBottomOf="parent"
@@ -86,9 +86,18 @@
       android:id="@+id/textView_detail_moviePlot"
       android:layout_width="match_parent"
       android:layout_height="0dp"
-      android:layout_weight="4"
+      android:layout_weight="3"
       android:textAlignment="center"
+      android:scrollbars="vertical"
+      />
 
+    <Button
+      android:id="@+id/button_detail_showTrailer"
+      android:text="@string/detail_showTrailer"
+      android:layout_width="match_parent"
+      android:layout_height="0dp"
+      android:layout_weight="1"
+      android:textAlignment="center"
       />
 
   </LinearLayout>

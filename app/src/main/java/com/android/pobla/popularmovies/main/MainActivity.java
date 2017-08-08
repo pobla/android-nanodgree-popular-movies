@@ -98,8 +98,8 @@ public class MainActivity extends AppCompatActivity implements MainView, MainVie
   @Override
   public void showLoadingDialog() {
     progressDialog = new ProgressDialog(this);
-    progressDialog.setTitle(getString(R.string.main_title_loading));
-    progressDialog.setMessage(getString(R.string.main_loading_message));
+    progressDialog.setTitle(getString(R.string.all_title_loading));
+    progressDialog.setMessage(getString(R.string.all_loading_message));
     progressDialog.show();
 
   }

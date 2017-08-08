@@ -2,12 +2,15 @@
   <string name="app_name">Popular Movies</string>
   <string name="mainMenu_topRated">Top Rated</string>
   <string name="mainMenu_mostPopular">Most Popular</string>
-  <string name="main_title_loading">Loading movies</string>
-  <string name="main_loading_message">Refreshing content, please wait.</string>
+  <string name="all_title_loading">Loading movies</string>
+  <string name="all_loading_message">Refreshing content, please wait.</string>
+  <string name="all_generic_error">Something went wrong, please try again later</string>
   <string name="title_activity_movie_detail">MovieDetailActivity</string>
   <string name="detail_releaseDate">Release date</string>
   <string name="detail_userRating">User rating</string>
   <string name="detail_description_image_poster">Image Poster</string>
   <string name="main_no_connection">Looks like there is an issue with the network, please check and try again</string>
   <string name="mainMenu_refresh">Refresh</string>
+  <string name="detail_showTrailer">Show trailer</string>
+  <string name="detail_dialog_row">[%1$s] %2$s (Res.: %3$dp)</string>
 </resources>
