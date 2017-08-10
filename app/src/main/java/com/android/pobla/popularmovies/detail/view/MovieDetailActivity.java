@@ -13,14 +13,21 @@ import com.android.pobla.popularmovies.model.Movie;
 import com.android.pobla.popularmovies.model.MovieSizes;
 import com.squareup.picasso.Picasso;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 public class MovieDetailActivity extends AppCompatActivity implements DetailView {
 
   private static final String MOVIE = "MOVIE";
 
-  private ImageView moviePoster;
-  private TextView moviePlot;
-  private TextView releaseDate;
-  private TextView userRating;
+  @BindView(R.id.imageView_detail_moviePoster)
+  ImageView moviePoster;
+  @BindView(R.id.textView_detail_moviePlot)
+  TextView moviePlot;
+  @BindView(R.id.textView_detail_releaseDate)
+  TextView releaseDate;
+  @BindView(R.id.textView_detail_userRating)
+  TextView userRating;
 
   private Movie movie;
 
@@ -30,20 +37,14 @@ public class MovieDetailActivity extends AppCompatActivity implements DetailView
     return intent;
   }
 
-
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_movie_detail);
+    ButterKnife.bind(this);
 
     setUpTitle();
     setUpToolbar();
-
-    moviePoster = (ImageView) findViewById(R.id.imageView_detail_moviePoster);
-    moviePlot = (TextView) findViewById(R.id.textView_detail_moviePlot);
-    releaseDate = (TextView) findViewById(R.id.textView_detail_releaseDate);
-    userRating = (TextView) findViewById(R.id.textView_detail_userRating);
-
     setUpContent();
 
   }

@@ -21,8 +21,6 @@ public class DefaultMainViewPresenter implements MainViewPresenter {
 
   private static final String UTF_8 = "UTF-8";
   private final String MOVIES_DB_BASE_URL = "https://api.themoviedb.org/3/movie";
-  private final String TOP_RATED = "top_rated";
-  private final String POPULARITY = "popular";
   private final String API_KEY = "api_key";
 
   private final MainView mainView;
@@ -34,17 +32,8 @@ public class DefaultMainViewPresenter implements MainViewPresenter {
   }
 
   @Override
-  public void refreshMoviesByPopularity() {
-    doRefresh(buildUrl(POPULARITY));
-  }
-
-  @Override
-  public void refreshMoviesByRate() {
-    doRefresh(buildUrl(TOP_RATED));
-  }
-
-  private void doRefresh(URL url) {
-    new RetrieveMoviesAsynTasks().execute(url);
+  public void refreshMovies(String method) {
+    new RetrieveMoviesAsyncTasks().execute(buildUrl(method));
   }
 
   private URL buildUrl(String path) {
@@ -60,7 +49,7 @@ public class DefaultMainViewPresenter implements MainViewPresenter {
     return null;
   }
 
-  private class RetrieveMoviesAsynTasks extends AsyncTask<URL, Void, MoviesResponse> {
+  private class RetrieveMoviesAsyncTasks extends AsyncTask<URL, Void, MoviesResponse> {
 
     @Override
     protected void onPreExecute() {
