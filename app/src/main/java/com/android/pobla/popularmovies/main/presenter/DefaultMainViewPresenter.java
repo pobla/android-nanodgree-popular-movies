@@ -28,17 +28,8 @@ public class DefaultMainViewPresenter implements MainViewPresenter {
   }
 
   @Override
-  public void refreshMoviesByPopularity() {
-    doRefresh(buildMostPopularMovieListUrl());
-  }
-
-  @Override
-  public void refreshMoviesByRate() {
-    doRefresh(buildTopRatedMovieListUrl());
-  }
-
-  private void doRefresh(URL url) {
-    new RetrieveMoviesAsyncTask().execute(url);
+  public void refreshMovies(String method) {
+    new RetrieveMoviesAsyncTask().execute(buildTopRatedMovieListUrl());
   }
 
   private class RetrieveMoviesAsyncTask extends AsyncTask<URL, Void, MoviesResponse> {

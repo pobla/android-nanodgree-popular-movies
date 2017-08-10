@@ -12,6 +12,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -26,15 +27,23 @@ import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 public class MovieDetailActivity extends AppCompatActivity implements DetailView {
 
   private static final String MOVIE = "MOVIE";
   private static final String YOUTUBE_URL = "http://www.youtube.com/watch?v=%s";
 
-  private ImageView moviePoster;
-  private TextView moviePlot;
-  private TextView releaseDate;
-  private TextView userRating;
+  @BindView(R.id.imageView_detail_moviePoster)
+  ImageView moviePoster;
+  @BindView(R.id.textView_detail_moviePlot)
+  TextView moviePlot;
+  @BindView(R.id.textView_detail_releaseDate)
+  TextView releaseDate;
+  @BindView(R.id.textView_detail_userRating)
+  TextView userRating;
+  @BindView(R.id.button_detail_showTrailer)
   private Button showDetail;
 
   private Movie movie;
@@ -47,21 +56,14 @@ public class MovieDetailActivity extends AppCompatActivity implements DetailView
     return intent;
   }
 
-
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_movie_detail);
+    ButterKnife.bind(this);
 
     redMovieFromIntent();
     setUpToolbar();
-
-    moviePoster = (ImageView) findViewById(R.id.imageView_detail_moviePoster);
-    moviePlot = (TextView) findViewById(R.id.textView_detail_moviePlot);
-    releaseDate = (TextView) findViewById(R.id.textView_detail_releaseDate);
-    userRating = (TextView) findViewById(R.id.textView_detail_userRating);
-    showDetail = (Button) findViewById(R.id.button_detail_showTrailer);
-
     setUpContent();
 
     presenter = new DefaultDetailPresenter(this, this.movie);

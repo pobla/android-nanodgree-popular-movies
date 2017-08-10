@@ -1,11 +1,17 @@
 package com.android.pobla.popularmovies.main;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
+import android.os.Parcelable;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.DisplayMetrics;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -19,37 +25,51 @@ import com.android.pobla.popularmovies.main.view.MainView;
 import com.android.pobla.popularmovies.main.view.MainViewAdapter;
 import com.android.pobla.popularmovies.model.Movie;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
+import static com.android.pobla.popularmovies.main.presenter.MainViewPresenter.POPULARITY;
+import static com.android.pobla.popularmovies.main.presenter.MainViewPresenter.TOP_RATED;
+
 public class MainActivity extends AppCompatActivity implements MainView, MainViewAdapter.ItemClickListener {
+
+  private static final String LAYOUT_MANAGER_STATE = "layoutManagerState";
+  private static final String MOVIES_STATE = "moviesState";
+  private static final int SCALING_FACTOR = 100;
+  private static final String SORT_CRITERIA = "SORT_CRITERIA";
 
   MainViewPresenter presenter;
   MainViewAdapter mainViewAdapter;
 
+  @BindView(R.id.recycleView_main_movieGrid)
   RecyclerView movieGrid;
+  @BindView(R.id.textView_main_noMovies)
   TextView textViewNoMovies;
+
   private ProgressDialog progressDialog;
-  private Menu menu;
+  private Parcelable movieGridState;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_main);
+    ButterKnife.bind(this);
     presenter = new DefaultMainViewPresenter(this);
 
     mainViewAdapter = new MainViewAdapter(this);
-    movieGrid = (RecyclerView) findViewById(R.id.recycleView_main_movieGrid);
-    textViewNoMovies = (TextView) findViewById(R.id.textView_main_noMovies);
-    movieGrid.setLayoutManager(new GridLayoutManager(this, 3));
+    movieGrid.setLayoutManager(new GridLayoutManager(this, calculateNoOfColumns()));
     movieGrid.setAdapter(mainViewAdapter);
-    presenter.refreshMoviesByRate();
   }
 
 
   @Override
   public boolean onCreateOptionsMenu(Menu menu) {
     getMenuInflater().inflate(R.menu.main_menu, menu);
-    this.menu = menu;
+    int actionIdSelected = POPULARITY.equals(getCriteriaSelected()) ? R.id.action_popularity : R.id.action_rated;
+    menu.findItem(actionIdSelected).setChecked(true);
     return true;
   }
 
@@ -60,11 +80,11 @@ public class MainActivity extends AppCompatActivity implements MainView, MainVie
         refreshSelected();
         return true;
       case R.id.action_popularity:
-        presenter.refreshMoviesByPopularity();
+        refreshView(POPULARITY);
         item.setChecked(true);
         return true;
       case R.id.action_rated:
-        presenter.refreshMoviesByRate();
+        refreshView(TOP_RATED);
         item.setChecked(true);
         return true;
       default:
@@ -72,12 +92,23 @@ public class MainActivity extends AppCompatActivity implements MainView, MainVie
     }
   }
 
+  private void refreshView(String sortCriteria) {
+    presenter.refreshMovies(sortCriteria);
+    SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
+    Editor edit = sharedPref.edit();
+    edit.putString(SORT_CRITERIA, sortCriteria);
+    edit.apply();
+  }
+
   private void refreshSelected() {
-    MenuItem item = menu.findItem(R.id.action_popularity);
-    if (item != null && item.isChecked())
-      presenter.refreshMoviesByPopularity();
-    else
-      presenter.refreshMoviesByRate();
+    String refreshCriteria = getCriteriaSelected();
+    presenter.refreshMovies(refreshCriteria);
+  }
+
+  @NonNull
+  private String getCriteriaSelected() {
+    SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
+    return sharedPref.getString(SORT_CRITERIA, TOP_RATED);
   }
 
   @Override
@@ -114,6 +145,42 @@ public class MainActivity extends AppCompatActivity implements MainView, MainVie
   public void onItemClick(Movie movie) {
     Intent intent = MovieDetailActivity.buildIntent(this, movie);
     startActivity(intent);
+  }
 
+  @Override
+  protected void onResume() {
+    super.onResume();
+    movieGrid.getLayoutManager().onRestoreInstanceState(movieGridState);
+    if (mainViewAdapter.getMovies().size() == 0) {
+      refreshSelected();
+    }
+  }
+
+  @Override
+  public void onSaveInstanceState(Bundle outState) {
+    super.onSaveInstanceState(outState);
+    movieGridState = movieGrid.getLayoutManager().onSaveInstanceState();
+    outState.putParcelable(LAYOUT_MANAGER_STATE, movieGridState);
+    outState.putParcelableArrayList(MOVIES_STATE, new ArrayList<Parcelable>(mainViewAdapter.getMovies()));
+  }
+
+  @Override
+  protected void onRestoreInstanceState(Bundle savedInstanceState) {
+    super.onRestoreInstanceState(savedInstanceState);
+    if (savedInstanceState != null) {
+      Parcelable savedRecyclerLayoutState = savedInstanceState.getParcelable(LAYOUT_MANAGER_STATE);
+      movieGrid.getLayoutManager().onRestoreInstanceState(savedRecyclerLayoutState);
+      ArrayList<Movie> parcelableArrayList = savedInstanceState.<Movie>getParcelableArrayList(MOVIES_STATE);
+      if (parcelableArrayList == null || parcelableArrayList.size() == 0) {
+        refreshSelected();
+      }
+      mainViewAdapter.setMovies(parcelableArrayList);
+    }
+  }
+
+  private int calculateNoOfColumns() {
+    DisplayMetrics displayMetrics = this.getResources().getDisplayMetrics();
+    float dpWidth = displayMetrics.widthPixels / displayMetrics.density;
+    return (int) (dpWidth / SCALING_FACTOR);
   }
 }

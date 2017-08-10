@@ -20,7 +20,10 @@ import com.squareup.picasso.Picasso;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainViewAdapter extends Adapter<MovieViewHolder>  {
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
+public class MainViewAdapter extends Adapter<MovieViewHolder> {
 
   private final ItemClickListener itemClickListener;
 
@@ -43,6 +46,8 @@ public class MainViewAdapter extends Adapter<MovieViewHolder>  {
     Movie movie = movies.get(position);
     Picasso.with(holder.moviePoster.getContext())
       .load(buildImageUrl(movie))
+      .placeholder(R.drawable.ic_autorenew_black_24dp)
+      .error(R.drawable.ic_error_outline_black_24dp)
       .into(holder.moviePoster);
     holder.movieTitle.setText(movie.getTitle());
 
@@ -63,15 +68,20 @@ public class MainViewAdapter extends Adapter<MovieViewHolder>  {
     notifyDataSetChanged();
   }
 
-  class MovieViewHolder extends RecyclerView.ViewHolder implements OnClickListener{
+  public List<Movie> getMovies() {
+    return movies;
+  }
 
-    final TextView movieTitle;
-    final ImageView moviePoster;
+  class MovieViewHolder extends RecyclerView.ViewHolder implements OnClickListener {
+
+    @BindView(R.id.textview_main_movieTitle)
+    TextView movieTitle;
+    @BindView(R.id.imageView_main_moviePoster)
+    ImageView moviePoster;
 
     public MovieViewHolder(View itemView) {
       super(itemView);
-      movieTitle = (TextView) itemView.findViewById(R.id.textview_main_movieTitle);
-      moviePoster = (ImageView) itemView.findViewById(R.id.imageView_main_moviePoster);
+      ButterKnife.bind(this, itemView);
       itemView.setOnClickListener(this);
     }
 
