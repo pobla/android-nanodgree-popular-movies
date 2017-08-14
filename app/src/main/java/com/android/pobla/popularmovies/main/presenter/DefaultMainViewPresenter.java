@@ -14,8 +14,7 @@ import java.net.URL;
 import java.net.URLConnection;
 
 import static com.android.pobla.popularmovies.model.MovieDbUrlBuilder.UTF_8;
-import static com.android.pobla.popularmovies.model.MovieDbUrlBuilder.buildMostPopularMovieListUrl;
-import static com.android.pobla.popularmovies.model.MovieDbUrlBuilder.buildTopRatedMovieListUrl;
+import static com.android.pobla.popularmovies.model.MovieDbUrlBuilder.buildMovieListUrl;
 
 public class DefaultMainViewPresenter implements MainViewPresenter {
 
@@ -29,7 +28,7 @@ public class DefaultMainViewPresenter implements MainViewPresenter {
 
   @Override
   public void refreshMovies(String method) {
-    new RetrieveMoviesAsyncTask().execute(buildTopRatedMovieListUrl());
+    new RetrieveMoviesAsyncTask().execute(buildMovieListUrl(method));
   }
 
   private class RetrieveMoviesAsyncTask extends AsyncTask<URL, Void, MoviesResponse> {

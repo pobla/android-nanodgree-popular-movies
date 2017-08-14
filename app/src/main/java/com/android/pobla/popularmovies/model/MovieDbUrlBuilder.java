@@ -12,23 +12,13 @@ public class MovieDbUrlBuilder {
 
   public static final String UTF_8 = "UTF-8";
 
-  private static final String TOP_RATED = "top_rated";
-  private static final String POPULARITY = "popular";
   private static final String VIDEOS = "videos";
   private static final String MOVIES_DB_BASE_URL = "https://api.themoviedb.org/3/movie";
   private static final String API_KEY = "api_key";
 
   private MovieDbUrlBuilder(){};
 
-  public static URL buildTopRatedMovieListUrl() {
-    return buildMovieListUrl(TOP_RATED);
-  }
-
-  public static URL buildMostPopularMovieListUrl() {
-    return buildMovieListUrl(POPULARITY);
-  }
-
-  private static URL buildMovieListUrl(String path) {
+  public static URL buildMovieListUrl(String path) {
     try {
       return new URL(Uri.parse(MOVIES_DB_BASE_URL)
                        .buildUpon()

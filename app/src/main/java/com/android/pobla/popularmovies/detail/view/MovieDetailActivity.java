@@ -44,7 +44,7 @@ public class MovieDetailActivity extends AppCompatActivity implements DetailView
   @BindView(R.id.textView_detail_userRating)
   TextView userRating;
   @BindView(R.id.button_detail_showTrailer)
-  private Button showDetail;
+  Button showDetail;
 
   private Movie movie;
   private DetailPresenter presenter;
