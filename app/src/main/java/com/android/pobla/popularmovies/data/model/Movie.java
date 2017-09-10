@@ -1,6 +1,7 @@
 package com.android.pobla.popularmovies.data.model;
 
 
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -10,7 +11,7 @@ import com.google.gson.annotations.SerializedName;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Movie implements Parcelable{
+public class Movie implements Parcelable {
 
   @SerializedName("vote_count")
   private int voteCount;
@@ -129,6 +130,21 @@ public class Movie implements Parcelable{
   public List<Integer> getGenreIds() {
     return genreIds;
   }
+
+  //TODO create a better way and the other way around
+  public String getGenreIdsAsString() {
+    if (genreIds != null && genreIds.size() > 0) {
+      StringBuilder stBfr = new StringBuilder();
+      for (int i = 0; i < genreIds.size(); i++) {
+        stBfr.append(genreIds.get(i));
+        stBfr.append(",");
+      }
+      stBfr.setLength(stBfr.length() - 1);//remove last ,
+      return stBfr.toString();
+    }
+    return "";
+  }
+
 
   public void setGenreIds(List<Integer> genreIds) {
     this.genreIds = genreIds;
@@ -279,8 +295,8 @@ public class Movie implements Parcelable{
 
   public String getImageUrlWithSize(MovieSizes sizes) {
     return Uri.parse(IMAGE_DB_BASE_URL).buildUpon()
-      .appendEncodedPath(sizes.getSizePath())
-      .appendEncodedPath(getPosterPath())
-      .toString();
+             .appendEncodedPath(sizes.getSizePath())
+             .appendEncodedPath(getPosterPath())
+             .toString();
   }
 }

@@ -27,6 +27,15 @@
         android:name="android.support.PARENT_ACTIVITY"
         android:value="com.android.pobla.popularmovies.main.MainActivity"/>
     </activity>
+
+    <provider
+      android:authorities="com.android.pobla.popularmovies"
+      android:name=".data.MovieProvider"
+      android:exported="false"/>
+
+    <service android:name=".data.sync.MovieSyncService"
+             android:exported="false"/>
+
   </application>
 
 </manifest>

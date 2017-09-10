@@ -2,6 +2,7 @@ package com.android.pobla.popularmovies.main.view;
 
 
 import android.content.Context;
+import android.database.Cursor;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.RecyclerView.Adapter;
 import android.view.LayoutInflater;
@@ -12,13 +13,12 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.android.pobla.popularmovies.R;
+import com.android.pobla.popularmovies.data.MovieContract.MovieEntry;
 import com.android.pobla.popularmovies.main.view.MainViewAdapter.MovieViewHolder;
 import com.android.pobla.popularmovies.data.model.Movie;
 import com.android.pobla.popularmovies.data.model.MovieSizes;
 import com.squareup.picasso.Picasso;
 
-import java.util.ArrayList;
-import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -31,8 +31,7 @@ public class MainViewAdapter extends Adapter<MovieViewHolder> {
     this.itemClickListener = itemClickListener;
   }
 
-
-  private final List<Movie> movies = new ArrayList<>();
+  private Cursor cursor;
 
   @Override
   public MovieViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -43,7 +42,8 @@ public class MainViewAdapter extends Adapter<MovieViewHolder> {
 
   @Override
   public void onBindViewHolder(MovieViewHolder holder, int position) {
-    Movie movie = movies.get(position);
+    cursor.moveToPosition(position);
+    Movie movie = MovieEntry.buildFromCursor(cursor);
     Picasso.with(holder.moviePoster.getContext())
       .load(buildImageUrl(movie))
       .placeholder(R.drawable.ic_autorenew_black_24dp)
@@ -59,17 +59,15 @@ public class MainViewAdapter extends Adapter<MovieViewHolder> {
 
   @Override
   public int getItemCount() {
-    return this.movies.size();
+    return (this.cursor != null )? cursor.getCount() : 0;
   }
 
-  public void setMovies(List<Movie> movies) {
-    this.movies.clear();
-    this.movies.addAll(movies);
+  public void setCursor(Cursor cursor) {
+    if(this.cursor != null){
+      this.cursor.close();
+    }
+    this.cursor = cursor;
     notifyDataSetChanged();
-  }
-
-  public List<Movie> getMovies() {
-    return movies;
   }
 
   class MovieViewHolder extends RecyclerView.ViewHolder implements OnClickListener {
@@ -88,7 +86,9 @@ public class MainViewAdapter extends Adapter<MovieViewHolder> {
     @Override
     public void onClick(View v) {
       int clickedPosition = getAdapterPosition();
-      itemClickListener.onItemClick(movies.get(clickedPosition));
+      cursor.moveToPosition(clickedPosition);
+      Movie movie = MovieEntry.buildFromCursor(cursor);
+      itemClickListener.onItemClick(movie);
     }
   }
 
