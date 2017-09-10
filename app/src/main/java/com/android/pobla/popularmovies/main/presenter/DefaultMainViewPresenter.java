@@ -4,7 +4,7 @@ package com.android.pobla.popularmovies.main.presenter;
 import android.os.AsyncTask;
 
 import com.android.pobla.popularmovies.main.view.MainView;
-import com.android.pobla.popularmovies.model.MoviesResponse;
+import com.android.pobla.popularmovies.data.model.MoviesResponse;
 import com.google.gson.Gson;
 
 import java.io.IOException;
@@ -13,8 +13,8 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
 
-import static com.android.pobla.popularmovies.model.MovieDbUrlBuilder.UTF_8;
-import static com.android.pobla.popularmovies.model.MovieDbUrlBuilder.buildMovieListUrl;
+import static com.android.pobla.popularmovies.data.model.MovieDbUrlBuilder.UTF_8;
+import static com.android.pobla.popularmovies.data.model.MovieDbUrlBuilder.buildMovieListUrl;
 
 public class DefaultMainViewPresenter implements MainViewPresenter {
 

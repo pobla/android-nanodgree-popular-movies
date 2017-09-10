@@ -1,4 +1,4 @@
-package com.android.pobla.popularmovies.model;
+package com.android.pobla.popularmovies.data.model;
 
 
 import com.google.gson.annotations.SerializedName;

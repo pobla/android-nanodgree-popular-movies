@@ -23,7 +23,7 @@ import com.android.pobla.popularmovies.main.presenter.DefaultMainViewPresenter;
 import com.android.pobla.popularmovies.main.presenter.MainViewPresenter;
 import com.android.pobla.popularmovies.main.view.MainView;
 import com.android.pobla.popularmovies.main.view.MainViewAdapter;
-import com.android.pobla.popularmovies.model.Movie;
+import com.android.pobla.popularmovies.data.model.Movie;
 
 import java.util.ArrayList;
 import java.util.List;

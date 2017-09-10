@@ -1,7 +1,7 @@
 package com.android.pobla.popularmovies.detail.view;
 
 
-import com.android.pobla.popularmovies.model.MovieVideos;
+import com.android.pobla.popularmovies.data.model.MovieVideos;
 
 import java.util.List;
 

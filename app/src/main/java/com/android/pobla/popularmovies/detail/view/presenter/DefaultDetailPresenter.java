@@ -4,11 +4,11 @@ package com.android.pobla.popularmovies.detail.view.presenter;
 import android.os.AsyncTask;
 
 import com.android.pobla.popularmovies.detail.view.DetailView;
-import com.android.pobla.popularmovies.model.Movie;
-import com.android.pobla.popularmovies.model.MovieDbUrlBuilder;
-import com.android.pobla.popularmovies.model.MovieVideos;
-import com.android.pobla.popularmovies.model.MovieVideosResponse;
-import com.android.pobla.popularmovies.model.MoviesResponse;
+import com.android.pobla.popularmovies.data.model.Movie;
+import com.android.pobla.popularmovies.data.model.MovieDbUrlBuilder;
+import com.android.pobla.popularmovies.data.model.MovieVideos;
+import com.android.pobla.popularmovies.data.model.MovieVideosResponse;
+import com.android.pobla.popularmovies.data.model.MoviesResponse;
 import com.google.gson.Gson;
 
 import java.io.IOException;
@@ -16,10 +16,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.ArrayList;
-import java.util.List;
 
-import static com.android.pobla.popularmovies.model.MovieDbUrlBuilder.UTF_8;
+import static com.android.pobla.popularmovies.data.model.MovieDbUrlBuilder.UTF_8;
 
 public class DefaultDetailPresenter implements DetailPresenter {
 

@@ -13,8 +13,8 @@ import android.widget.TextView;
 
 import com.android.pobla.popularmovies.R;
 import com.android.pobla.popularmovies.main.view.MainViewAdapter.MovieViewHolder;
-import com.android.pobla.popularmovies.model.Movie;
-import com.android.pobla.popularmovies.model.MovieSizes;
+import com.android.pobla.popularmovies.data.model.Movie;
+import com.android.pobla.popularmovies.data.model.MovieSizes;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
