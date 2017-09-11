@@ -94,7 +94,7 @@ public class MovieProvider extends ContentProvider {
       int rowsInserted = 0;
       try {
         for (ContentValues value : values) {
-          long _id = db.insert(TABLE_NAME, null, value);
+          long _id = db.insertOrThrow(TABLE_NAME, null, value);
           if (_id != -1) {
             rowsInserted++;
           }
@@ -126,6 +126,16 @@ public class MovieProvider extends ContentProvider {
 
   @Override
   public int update(@NonNull Uri uri, @Nullable ContentValues values, @Nullable String selection, @Nullable String[] selectionArgs) {
+    if (sUriMatcher.match(uri) == CODE_MOVIE_WITH_ID) {
+      String normalizedUtcDateString = uri.getLastPathSegment();
+      String[] selectionArguments = new String[]{normalizedUtcDateString};
+      SQLiteDatabase writableDatabase = dbHelper.getWritableDatabase();
+      int update = writableDatabase.update(TABLE_NAME, values, MovieEntry._ID + " = ? ", selectionArguments);
+      if (update > 0) {
+        getContext().getContentResolver().notifyChange(uri, null);
+      }
+      return update;
+    }
     return 0;
   }
 }

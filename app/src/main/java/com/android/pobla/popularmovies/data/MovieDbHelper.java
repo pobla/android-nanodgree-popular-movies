@@ -11,7 +11,7 @@ public class MovieDbHelper extends SQLiteOpenHelper {
 
 
   private static final String DATABASE_NAME = "movies.db";
-  private static final int DATABASE_VERSION = 1;
+  private static final int DATABASE_VERSION = 3;
 
   public MovieDbHelper(Context context) {
     super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -33,7 +33,8 @@ public class MovieDbHelper extends SQLiteOpenHelper {
                                       MovieEntry.COLUMN_BACKDROP_PATH + " STRING NOT NULL, " +
                                       MovieEntry.COLUMN_ADULT + " BOOLEAN NOT NULL, " +
                                       MovieEntry.COLUMN_OVERVIEW + " STRING NOT NULL, " +
-                                      MovieEntry.COLUMN_RELEASE_DATE + " String NOT NULL );";
+                                      MovieEntry.COLUMN_RELEASE_DATE + " String NOT NULL, "+
+                                      MovieEntry.COLUMN_FAVOURITE + " BOOLEAN NOT NULL );";
 
     db.execSQL(SQL_CREATE_TABLE);
 

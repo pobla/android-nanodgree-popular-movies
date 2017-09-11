@@ -33,6 +33,7 @@ public class MovieContract {
     public static final String COLUMN_ADULT = "adult";
     public static final String COLUMN_OVERVIEW = "overview";
     public static final String COLUMN_RELEASE_DATE = "release_date";
+    public static final String COLUMN_FAVOURITE = "favourite";
 
     private static final int IDX_ID = 0;
     private static final int IDX_VOTE_COUNT = 1;
@@ -48,6 +49,7 @@ public class MovieContract {
     private static final int IDX_ADULT = 11;
     private static final int IDX_OVERVIEW = 12;
     private static final int IDX_RELEASE_DATE = 13;
+    private static final int IDX_FAVOURITE = 14;
 
     public static final String[] ALL_COLUMS = {
       _ID,
@@ -63,7 +65,8 @@ public class MovieContract {
       COLUMN_BACKDROP_PATH,
       COLUMN_ADULT,
       COLUMN_OVERVIEW,
-      COLUMN_RELEASE_DATE
+      COLUMN_RELEASE_DATE,
+      COLUMN_FAVOURITE
     };
 
     public static final Uri CONTENT_URI = BASE_CONTENT_URI.buildUpon()
@@ -92,6 +95,7 @@ public class MovieContract {
       movie.setAdult(cursor.getInt(IDX_ADULT) == 1);
       movie.setOverview(cursor.getString(IDX_OVERVIEW));
       movie.setReleaseDate(cursor.getString(IDX_RELEASE_DATE));
+      movie.setFavourite(cursor.getInt(IDX_FAVOURITE) == 1);
       return movie;
     }
 
@@ -111,6 +115,7 @@ public class MovieContract {
       contentValues.put(COLUMN_ADULT, movie.getAdult());
       contentValues.put(COLUMN_OVERVIEW, movie.getOverview());
       contentValues.put(COLUMN_RELEASE_DATE, movie.getReleaseDate());
+      contentValues.put(COLUMN_FAVOURITE, movie.isFavourite());
       return contentValues;
     }
   }
