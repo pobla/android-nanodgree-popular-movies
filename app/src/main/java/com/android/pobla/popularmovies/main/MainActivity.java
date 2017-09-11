@@ -19,6 +19,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.android.pobla.popularmovies.R;
+import com.android.pobla.popularmovies.data.MovieContract;
 import com.android.pobla.popularmovies.data.model.Movie;
 import com.android.pobla.popularmovies.detail.view.MovieDetailActivity;
 import com.android.pobla.popularmovies.main.presenter.DefaultMainViewPresenter;
@@ -143,7 +144,8 @@ public class MainActivity extends AppCompatActivity implements MainView, MainVie
 
   @Override
   public void onItemClick(Movie movie) {
-    Intent intent = MovieDetailActivity.buildIntent(this, movie);
+    Intent intent = new Intent(this, MovieDetailActivity.class);
+    intent.setData(MovieContract.MovieEntry.buildUriWithMovieId(movie.getId()));
     startActivity(intent);
   }
 

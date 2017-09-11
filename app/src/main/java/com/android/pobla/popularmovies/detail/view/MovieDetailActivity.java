@@ -44,16 +44,11 @@ public class MovieDetailActivity extends AppCompatActivity implements DetailView
   TextView userRating;
   @BindView(R.id.button_detail_showTrailer)
   Button showDetail;
+  @BindView(R.id.button_detail_addFav)
+  Button addFav;
 
-  private Movie movie;
   private DetailPresenter presenter;
   private ProgressDialog progressDialog;
-
-  public static Intent buildIntent(Context context, Movie movie) {
-    Intent intent = new Intent(context, MovieDetailActivity.class);
-    intent.putExtra(MOVIE, movie);
-    return intent;
-  }
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -61,15 +56,15 @@ public class MovieDetailActivity extends AppCompatActivity implements DetailView
     setContentView(R.layout.activity_movie_detail);
     ButterKnife.bind(this);
 
-    readMovieFromIntent();
     setUpToolbar();
-    setUpContent();
 
-    presenter = new DefaultDetailPresenter(this, this.movie);
+    presenter = new DefaultDetailPresenter(this, this, getIntent().getData());
+    getSupportLoaderManager().initLoader(DetailPresenter.MOVIE_LOADER_ID, null, presenter);
 
   }
 
-  private void setUpContent() {
+  @Override
+  public void bindMovie(Movie movie) {
     Picasso.with(this)
       .load(movie.getImageUrlWithSize(MovieSizes.W500))
       .into(moviePoster);
@@ -85,6 +80,12 @@ public class MovieDetailActivity extends AppCompatActivity implements DetailView
         presenter.getListOfTrailers();
       }
     });
+    addFav.setOnClickListener(new OnClickListener() {
+      @Override
+      public void onClick(View v) {
+        presenter.addFavourite();
+      }
+    });
 
   }
 
@@ -92,15 +93,6 @@ public class MovieDetailActivity extends AppCompatActivity implements DetailView
     Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
     setSupportActionBar(toolbar);
     getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-  }
-
-  private void readMovieFromIntent() {
-    Intent intentThatStartedThisActivity = getIntent();
-    if (intentThatStartedThisActivity.hasExtra(MOVIE)) {
-      movie = intentThatStartedThisActivity.getParcelableExtra(MOVIE);
-    } else {
-      //TODO do something here?
-    }
   }
 
   @Override

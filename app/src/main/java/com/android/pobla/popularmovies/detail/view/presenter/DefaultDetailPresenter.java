@@ -1,14 +1,19 @@
 package com.android.pobla.popularmovies.detail.view.presenter;
 
 
+import android.content.Context;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Bundle;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
 
+import com.android.pobla.popularmovies.data.MovieContract.MovieEntry;
 import com.android.pobla.popularmovies.detail.view.DetailView;
 import com.android.pobla.popularmovies.data.model.Movie;
 import com.android.pobla.popularmovies.data.model.MovieDbUrlBuilder;
-import com.android.pobla.popularmovies.data.model.MovieVideos;
 import com.android.pobla.popularmovies.data.model.MovieVideosResponse;
-import com.android.pobla.popularmovies.data.model.MoviesResponse;
 import com.google.gson.Gson;
 
 import java.io.IOException;
@@ -17,17 +22,21 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
 
+import static com.android.pobla.popularmovies.data.MovieContract.MovieEntry.ALL_COLUMS;
 import static com.android.pobla.popularmovies.data.model.MovieDbUrlBuilder.UTF_8;
 
-public class DefaultDetailPresenter implements DetailPresenter {
+public class DefaultDetailPresenter implements DetailPresenter{
 
   private final DetailView detailView;
-  private final Gson gsonMapper = new Gson();
-  private final Movie movie;
+  private final Context context;
+  private final Uri uri;
+  private Movie movie;
+  private Gson gsonMapper = new Gson();
 
-  public DefaultDetailPresenter(DetailView view, Movie movie) {
+  public DefaultDetailPresenter(Context context, DetailView view, Uri uri) {
+    this.context = context;
     this.detailView = view;
-    this.movie = movie;
+    this.uri = uri;
   }
 
   @Override
@@ -35,6 +44,32 @@ public class DefaultDetailPresenter implements DetailPresenter {
     URL url = MovieDbUrlBuilder.buildVideosUrlForMovie(movie.getId());
     new RetrieveTrailersAsyncTask().execute(url);
 
+  }
+
+  @Override
+  public void addFavourite() {
+
+  }
+
+  @Override
+  public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+    if (MOVIE_LOADER_ID != id) {
+      return null;
+    }
+    return new CursorLoader(context, uri, ALL_COLUMS, null, null, null);
+  }
+
+  @Override
+  public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+    data.moveToFirst();
+    Movie movie = MovieEntry.toMovie(data);
+    this.movie = movie;
+    detailView.bindMovie(movie);
+
+  }
+
+  @Override
+  public void onLoaderReset(Loader<Cursor> loader) {
   }
 
   private class RetrieveTrailersAsyncTask extends AsyncTask<URL, Void, MovieVideosResponse> {

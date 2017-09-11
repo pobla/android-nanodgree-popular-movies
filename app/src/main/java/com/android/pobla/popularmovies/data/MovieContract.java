@@ -15,6 +15,7 @@ public class MovieContract {
 
   public static final String PATH_MOVIES = "movies";
 
+
   public static final class MovieEntry implements BaseColumns {
 
     public static final String TABLE_NAME = "movies";
@@ -32,6 +33,21 @@ public class MovieContract {
     public static final String COLUMN_ADULT = "adult";
     public static final String COLUMN_OVERVIEW = "overview";
     public static final String COLUMN_RELEASE_DATE = "release_date";
+
+    private static final int IDX_ID = 0;
+    private static final int IDX_VOTE_COUNT = 1;
+    private static final int IDX_VIDEO = 2;
+    private static final int IDX_VOTE_AVERAGE = 3;
+    private static final int IDX_TITLE = 4;
+    private static final int IDX_POPULARITY = 5;
+    private static final int IDX_POSTER_PATH = 6;
+    private static final int IDX_ORIGINAL_LANGUAGE = 7;
+    private static final int IDX_ORIGINAL_TITLE = 8;
+    private static final int IDX_GENRE_IDS = 9;
+    private static final int IDX_BACKDROP_PATH = 10;
+    private static final int IDX_ADULT = 11;
+    private static final int IDX_OVERVIEW = 12;
+    private static final int IDX_RELEASE_DATE = 13;
 
     public static final String[] ALL_COLUMS = {
       _ID,
@@ -54,22 +70,28 @@ public class MovieContract {
                                             .appendPath(PATH_MOVIES)
                                             .build();
 
+    public static Uri buildUriWithMovieId(int id) {
+      return CONTENT_URI.buildUpon()
+               .appendPath(Integer.toString(id))
+               .build();
+    }
+
     public static Movie toMovie(Cursor cursor) {
       Movie movie = new Movie();
-      movie.setId(cursor.getInt(cursor.getColumnIndex(_ID)));
-      movie.setVoteCount(cursor.getInt(cursor.getColumnIndex(COLUMN_VOTE_COUNT)));
-      movie.setVideo(cursor.getInt(cursor.getColumnIndex(COLUMN_VIDEO)) == 1);
-      movie.setVoteAverage(cursor.getDouble(cursor.getColumnIndex(COLUMN_VOTE_AVERAGE)));
-      movie.setTitle(cursor.getString(cursor.getColumnIndex(COLUMN_TITLE)));
-      movie.setPopularity(cursor.getDouble(cursor.getColumnIndex(COLUMN_POPULARITY)));
-      movie.setPosterPath(cursor.getString(cursor.getColumnIndex(COLUMN_POSTER_PATH)));
-      movie.setOriginalLanguage(cursor.getString(cursor.getColumnIndex(COLUMN_ORIGINAL_LANGUAGE)));
-      movie.setOriginalTitle(cursor.getString(cursor.getColumnIndex(COLUMN_ORIGINAL_TITLE)));
-      movie.setGenreIds(cursor.getString(cursor.getColumnIndex(COLUMN_GENRE_IDS)));
-      movie.setBackdropPath(cursor.getString(cursor.getColumnIndex(COLUMN_BACKDROP_PATH)));
-      movie.setAdult(cursor.getInt(cursor.getColumnIndex(COLUMN_ADULT)) == 1);
-      movie.setOverview(cursor.getString(cursor.getColumnIndex(COLUMN_OVERVIEW)));
-      movie.setReleaseDate(cursor.getString(cursor.getColumnIndex(COLUMN_RELEASE_DATE)));
+      movie.setId(cursor.getInt(IDX_ID));
+      movie.setVoteCount(cursor.getInt(IDX_VOTE_COUNT));
+      movie.setVideo(cursor.getInt(IDX_VIDEO) == 1);
+      movie.setVoteAverage(cursor.getDouble(IDX_VOTE_AVERAGE));
+      movie.setTitle(cursor.getString(IDX_TITLE));
+      movie.setPopularity(cursor.getDouble(IDX_POPULARITY));
+      movie.setPosterPath(cursor.getString(IDX_POSTER_PATH));
+      movie.setOriginalLanguage(cursor.getString(IDX_ORIGINAL_LANGUAGE));
+      movie.setOriginalTitle(cursor.getString(IDX_ORIGINAL_TITLE));
+      movie.setGenreIds(cursor.getString(IDX_GENRE_IDS));
+      movie.setBackdropPath(cursor.getString(IDX_BACKDROP_PATH));
+      movie.setAdult(cursor.getInt(IDX_ADULT) == 1);
+      movie.setOverview(cursor.getString(IDX_OVERVIEW));
+      movie.setReleaseDate(cursor.getString(IDX_RELEASE_DATE));
       return movie;
     }
 

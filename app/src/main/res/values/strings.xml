@@ -13,4 +13,5 @@
   <string name="mainMenu_refresh">Refresh</string>
   <string name="detail_showTrailer">Show trailer</string>
   <string name="detail_dialog_row">[%1$s] %2$s (Res.: %3$dp)</string>
+  <string name="detail_addFav">Add to favourites</string>
 </resources>
