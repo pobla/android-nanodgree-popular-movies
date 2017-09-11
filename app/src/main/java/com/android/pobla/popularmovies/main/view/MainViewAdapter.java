@@ -14,11 +14,10 @@ import android.widget.TextView;
 
 import com.android.pobla.popularmovies.R;
 import com.android.pobla.popularmovies.data.MovieContract.MovieEntry;
-import com.android.pobla.popularmovies.main.view.MainViewAdapter.MovieViewHolder;
 import com.android.pobla.popularmovies.data.model.Movie;
 import com.android.pobla.popularmovies.data.model.MovieSizes;
+import com.android.pobla.popularmovies.main.view.MainViewAdapter.MovieViewHolder;
 import com.squareup.picasso.Picasso;
-
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -43,7 +42,7 @@ public class MainViewAdapter extends Adapter<MovieViewHolder> {
   @Override
   public void onBindViewHolder(MovieViewHolder holder, int position) {
     cursor.moveToPosition(position);
-    Movie movie = MovieEntry.buildFromCursor(cursor);
+    Movie movie = MovieEntry.toMovie(cursor);
     Picasso.with(holder.moviePoster.getContext())
       .load(buildImageUrl(movie))
       .placeholder(R.drawable.ic_autorenew_black_24dp)
@@ -59,11 +58,11 @@ public class MainViewAdapter extends Adapter<MovieViewHolder> {
 
   @Override
   public int getItemCount() {
-    return (this.cursor != null )? cursor.getCount() : 0;
+    return (this.cursor != null) ? cursor.getCount() : 0;
   }
 
   public void setCursor(Cursor cursor) {
-    if(this.cursor != null){
+    if (this.cursor != null) {
       this.cursor.close();
     }
     this.cursor = cursor;
@@ -87,7 +86,7 @@ public class MainViewAdapter extends Adapter<MovieViewHolder> {
     public void onClick(View v) {
       int clickedPosition = getAdapterPosition();
       cursor.moveToPosition(clickedPosition);
-      Movie movie = MovieEntry.buildFromCursor(cursor);
+      Movie movie = MovieEntry.toMovie(cursor);
       itemClickListener.onItemClick(movie);
     }
   }

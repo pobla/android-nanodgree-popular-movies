@@ -29,7 +29,7 @@ public class MovieDbHelper extends SQLiteOpenHelper {
                                       MovieEntry.COLUMN_POSTER_PATH + " STRING NOT NULL, " +
                                       MovieEntry.COLUMN_ORIGINAL_LANGUAGE + " STRING NOT NULL, " +
                                       MovieEntry.COLUMN_ORIGINAL_TITLE + " STRING NOT NULL, " +
-                                      MovieEntry.COLUMN_GENRE_IDS + " STRING NOT NULL, " + //Comma separated TODO something with this
+                                      MovieEntry.COLUMN_GENRE_IDS + " STRING NOT NULL, " + //Comma separated
                                       MovieEntry.COLUMN_BACKDROP_PATH + " STRING NOT NULL, " +
                                       MovieEntry.COLUMN_ADULT + " BOOLEAN NOT NULL, " +
                                       MovieEntry.COLUMN_OVERVIEW + " STRING NOT NULL, " +

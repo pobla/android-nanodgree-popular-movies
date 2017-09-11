@@ -17,11 +17,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.pobla.popularmovies.R;
-import com.android.pobla.popularmovies.detail.view.presenter.DefaultDetailPresenter;
-import com.android.pobla.popularmovies.detail.view.presenter.DetailPresenter;
 import com.android.pobla.popularmovies.data.model.Movie;
 import com.android.pobla.popularmovies.data.model.MovieSizes;
 import com.android.pobla.popularmovies.data.model.MovieVideos;
+import com.android.pobla.popularmovies.detail.view.presenter.DefaultDetailPresenter;
+import com.android.pobla.popularmovies.detail.view.presenter.DetailPresenter;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
@@ -61,7 +61,7 @@ public class MovieDetailActivity extends AppCompatActivity implements DetailView
     setContentView(R.layout.activity_movie_detail);
     ButterKnife.bind(this);
 
-    redMovieFromIntent();
+    readMovieFromIntent();
     setUpToolbar();
     setUpContent();
 
@@ -94,11 +94,11 @@ public class MovieDetailActivity extends AppCompatActivity implements DetailView
     getSupportActionBar().setDisplayHomeAsUpEnabled(true);
   }
 
-  private void redMovieFromIntent() {
+  private void readMovieFromIntent() {
     Intent intentThatStartedThisActivity = getIntent();
     if (intentThatStartedThisActivity.hasExtra(MOVIE)) {
       movie = intentThatStartedThisActivity.getParcelableExtra(MOVIE);
-    }else{
+    } else {
       //TODO do something here?
     }
   }
@@ -143,7 +143,7 @@ public class MovieDetailActivity extends AppCompatActivity implements DetailView
   }
 
   private Uri buildYoutubeUri(MovieVideos movieVideos) {
-    return Uri.parse(String.format(YOUTUBE_URL,movieVideos.getKey()));
+    return Uri.parse(String.format(YOUTUBE_URL, movieVideos.getKey()));
   }
 
   private String[] buildDialogRows(List<MovieVideos> results) {

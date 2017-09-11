@@ -1,6 +1,7 @@
 package com.android.pobla.popularmovies.data;
 
 
+import android.content.ContentValues;
 import android.database.Cursor;
 import android.net.Uri;
 import android.provider.BaseColumns;
@@ -53,8 +54,7 @@ public class MovieContract {
                                             .appendPath(PATH_MOVIES)
                                             .build();
 
-    //TODO move this to another class
-    public static Movie buildFromCursor(Cursor cursor) {
+    public static Movie toMovie(Cursor cursor) {
       Movie movie = new Movie();
       movie.setId(cursor.getInt(cursor.getColumnIndex(_ID)));
       movie.setVoteCount(cursor.getInt(cursor.getColumnIndex(COLUMN_VOTE_COUNT)));
@@ -65,12 +65,31 @@ public class MovieContract {
       movie.setPosterPath(cursor.getString(cursor.getColumnIndex(COLUMN_POSTER_PATH)));
       movie.setOriginalLanguage(cursor.getString(cursor.getColumnIndex(COLUMN_ORIGINAL_LANGUAGE)));
       movie.setOriginalTitle(cursor.getString(cursor.getColumnIndex(COLUMN_ORIGINAL_TITLE)));
-//      movie.setGenreIds(cursor.getString(cursor.getColumnIndex(COLUMN_GENRE_IDS)));
+      movie.setGenreIds(cursor.getString(cursor.getColumnIndex(COLUMN_GENRE_IDS)));
       movie.setBackdropPath(cursor.getString(cursor.getColumnIndex(COLUMN_BACKDROP_PATH)));
       movie.setAdult(cursor.getInt(cursor.getColumnIndex(COLUMN_ADULT)) == 1);
       movie.setOverview(cursor.getString(cursor.getColumnIndex(COLUMN_OVERVIEW)));
       movie.setReleaseDate(cursor.getString(cursor.getColumnIndex(COLUMN_RELEASE_DATE)));
       return movie;
+    }
+
+    public static ContentValues toContentValue(Movie movie) {
+      ContentValues contentValues = new ContentValues();
+      contentValues.put(_ID, movie.getId());
+      contentValues.put(COLUMN_VOTE_COUNT, movie.getVoteCount());
+      contentValues.put(COLUMN_VIDEO, movie.getVideo());
+      contentValues.put(COLUMN_VOTE_AVERAGE, movie.getVoteAverage());
+      contentValues.put(COLUMN_TITLE, movie.getTitle());
+      contentValues.put(COLUMN_POPULARITY, movie.getPopularity());
+      contentValues.put(COLUMN_POSTER_PATH, movie.getPosterPath());
+      contentValues.put(COLUMN_ORIGINAL_LANGUAGE, movie.getOriginalLanguage());
+      contentValues.put(COLUMN_ORIGINAL_TITLE, movie.getOriginalTitle());
+      contentValues.put(COLUMN_GENRE_IDS, movie.getGenreIdsAsString());
+      contentValues.put(COLUMN_BACKDROP_PATH, movie.getBackdropPath());
+      contentValues.put(COLUMN_ADULT, movie.getAdult());
+      contentValues.put(COLUMN_OVERVIEW, movie.getOverview());
+      contentValues.put(COLUMN_RELEASE_DATE, movie.getReleaseDate());
+      return contentValues;
     }
   }
 }

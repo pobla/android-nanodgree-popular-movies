@@ -1,67 +1,51 @@
 package com.android.pobla.popularmovies.main.presenter;
 
 
-import android.os.AsyncTask;
+import android.content.Context;
+import android.database.Cursor;
+import android.os.Bundle;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
 
+import com.android.pobla.popularmovies.data.sync.MovieSyncService;
 import com.android.pobla.popularmovies.main.view.MainView;
-import com.android.pobla.popularmovies.data.model.MoviesResponse;
-import com.google.gson.Gson;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.URL;
-import java.net.URLConnection;
-
-import static com.android.pobla.popularmovies.data.model.MovieDbUrlBuilder.UTF_8;
+import static com.android.pobla.popularmovies.data.MovieContract.MovieEntry.ALL_COLUMS;
+import static com.android.pobla.popularmovies.data.MovieContract.MovieEntry.CONTENT_URI;
 import static com.android.pobla.popularmovies.data.model.MovieDbUrlBuilder.buildMovieListUrl;
 
 public class DefaultMainViewPresenter implements MainViewPresenter {
 
   private final MainView mainView;
+  private final Context context;
 
-  private final Gson gsonMapper = new Gson();
-
-  public DefaultMainViewPresenter(MainView mainView) {
+  public DefaultMainViewPresenter(Context context, MainView mainView) {
+    this.context = context;
     this.mainView = mainView;
   }
 
   @Override
   public void refreshMovies(String method) {
-    new RetrieveMoviesAsyncTask().execute(buildMovieListUrl(method));
+    MovieSyncService.startImmediateSync(context, buildMovieListUrl(method));
   }
 
-  private class RetrieveMoviesAsyncTask extends AsyncTask<URL, Void, MoviesResponse> {
-
-    @Override
-    protected void onPreExecute() {
-      super.onPreExecute();
-      mainView.showLoadingDialog();
-    }
-
-    @Override
-    protected MoviesResponse doInBackground(URL... params) {
-      URL url = params[0];
-      try {
-        URLConnection urlConnection = url.openConnection();
-        InputStream content = (InputStream) urlConnection.getContent();
-        return gsonMapper.fromJson(new InputStreamReader(content, UTF_8), MoviesResponse.class);
-      } catch (IOException e) {
-        e.printStackTrace();
-      }
+  @Override
+  public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+    if (MOVIE_LOADER_ID != id) {
       return null;
-
     }
+    mainView.showLoadingDialog();
+    return new CursorLoader(context, CONTENT_URI, ALL_COLUMS, null, null, null);
+  }
 
-    @Override
-    protected void onPostExecute(MoviesResponse moviesResponse) {
-      super.onPostExecute(moviesResponse);
-      mainView.cancelLoadingDialog();
-      if (moviesResponse != null && moviesResponse.getResults() != null) {
-        mainView.showMovies(moviesResponse.getResults());
-      } else {
-        mainView.showEmptyView();
-      }
-    }
+  @Override
+  public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+    mainView.cancelLoadingDialog();
+    mainView.showMovies(data);
+  }
+
+  @Override
+  public void onLoaderReset(Loader<Cursor> loader) {
+    mainView.showMovies(null);
   }
 }

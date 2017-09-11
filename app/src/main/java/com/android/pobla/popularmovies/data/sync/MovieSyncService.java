@@ -42,6 +42,7 @@ public class MovieSyncService extends IntentService {
       MoviesResponse moviesResponse = gsonMapper.fromJson(new InputStreamReader(content, UTF_8), MoviesResponse.class);
       ContentValues[] contentValues = moviesToContentsValues(moviesResponse);
       ContentResolver contentResolver = getContentResolver();
+      contentResolver.delete(MovieContract.MovieEntry.CONTENT_URI, null, null);
       contentResolver.bulkInsert(MovieContract.MovieEntry.CONTENT_URI, contentValues);
       return;
     } catch (IOException e) {
@@ -50,28 +51,11 @@ public class MovieSyncService extends IntentService {
 
   }
 
-  //TODO refactor this to another class
   private ContentValues[] moviesToContentsValues(MoviesResponse moviesResponse) {
     List<Movie> results = moviesResponse.getResults();
     ContentValues[] contentValuesArray = new ContentValues[results.size()];
     for (int i = 0; i < results.size(); i++) {
-      Movie movie = results.get(i);
-      ContentValues contentValues = new ContentValues();
-      contentValues.put(MovieEntry._ID, movie.getId());
-      contentValues.put(MovieContract.MovieEntry.COLUMN_VOTE_COUNT, movie.getVoteCount());
-      contentValues.put(MovieContract.MovieEntry.COLUMN_VIDEO, movie.getVideo());
-      contentValues.put(MovieContract.MovieEntry.COLUMN_VOTE_AVERAGE, movie.getVoteAverage());
-      contentValues.put(MovieContract.MovieEntry.COLUMN_TITLE, movie.getTitle());
-      contentValues.put(MovieContract.MovieEntry.COLUMN_POPULARITY, movie.getPopularity());
-      contentValues.put(MovieContract.MovieEntry.COLUMN_POSTER_PATH, movie.getPosterPath());
-      contentValues.put(MovieContract.MovieEntry.COLUMN_ORIGINAL_LANGUAGE, movie.getOriginalLanguage());
-      contentValues.put(MovieContract.MovieEntry.COLUMN_ORIGINAL_TITLE, movie.getOriginalTitle());
-      contentValues.put(MovieContract.MovieEntry.COLUMN_GENRE_IDS, movie.getGenreIdsAsString());
-      contentValues.put(MovieContract.MovieEntry.COLUMN_BACKDROP_PATH, movie.getBackdropPath());
-      contentValues.put(MovieContract.MovieEntry.COLUMN_ADULT, movie.getAdult());
-      contentValues.put(MovieContract.MovieEntry.COLUMN_OVERVIEW, movie.getOverview());
-      contentValues.put(MovieContract.MovieEntry.COLUMN_RELEASE_DATE, movie.getReleaseDate());
-      contentValuesArray[i] = contentValues;
+      contentValuesArray[i] = MovieEntry.toContentValue(results.get(i));
     }
     return contentValuesArray;
   }

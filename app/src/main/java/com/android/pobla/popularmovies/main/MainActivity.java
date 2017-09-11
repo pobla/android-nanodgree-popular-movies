@@ -9,9 +9,6 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
-import android.support.v4.app.LoaderManager;
-import android.support.v4.content.CursorLoader;
-import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -23,32 +20,23 @@ import android.widget.TextView;
 
 import com.android.pobla.popularmovies.R;
 import com.android.pobla.popularmovies.data.model.Movie;
-import com.android.pobla.popularmovies.data.sync.MovieSyncService;
 import com.android.pobla.popularmovies.detail.view.MovieDetailActivity;
 import com.android.pobla.popularmovies.main.presenter.DefaultMainViewPresenter;
 import com.android.pobla.popularmovies.main.presenter.MainViewPresenter;
 import com.android.pobla.popularmovies.main.view.MainView;
 import com.android.pobla.popularmovies.main.view.MainViewAdapter;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-import static com.android.pobla.popularmovies.data.MovieContract.MovieEntry.ALL_COLUMS;
-import static com.android.pobla.popularmovies.data.MovieContract.MovieEntry.CONTENT_URI;
-import static com.android.pobla.popularmovies.data.model.MovieDbUrlBuilder.buildMovieListUrl;
 import static com.android.pobla.popularmovies.main.presenter.MainViewPresenter.POPULARITY;
 import static com.android.pobla.popularmovies.main.presenter.MainViewPresenter.TOP_RATED;
 
-public class MainActivity extends AppCompatActivity implements MainView, MainViewAdapter.ItemClickListener, LoaderManager.LoaderCallbacks<Cursor> {
+public class MainActivity extends AppCompatActivity implements MainView, MainViewAdapter.ItemClickListener {
 
   private static final String LAYOUT_MANAGER_STATE = "layoutManagerState";
-  private static final String MOVIES_STATE = "moviesState";
   private static final int SCALING_FACTOR = 100;
   private static final String SORT_CRITERIA = "SORT_CRITERIA";
-  private static final int MOVIE_LOADER_ID = 231312;
 
   MainViewPresenter presenter;
   MainViewAdapter mainViewAdapter;
@@ -66,13 +54,13 @@ public class MainActivity extends AppCompatActivity implements MainView, MainVie
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_main);
     ButterKnife.bind(this);
-    presenter = new DefaultMainViewPresenter(this);
+    presenter = new DefaultMainViewPresenter(this, this);
 
     mainViewAdapter = new MainViewAdapter(this);
     movieGrid.setLayoutManager(new GridLayoutManager(this, calculateNoOfColumns()));
     movieGrid.setAdapter(mainViewAdapter);
 
-    getSupportLoaderManager().initLoader(MOVIE_LOADER_ID, null, this);
+    getSupportLoaderManager().initLoader(MainViewPresenter.MOVIE_LOADER_ID, null, presenter);
   }
 
 
@@ -112,11 +100,8 @@ public class MainActivity extends AppCompatActivity implements MainView, MainVie
   }
 
 
-  //TODO review this
   private void refreshSelected() {
-    MovieSyncService.startImmediateSync(this, buildMovieListUrl(getCriteriaSelected()));
-//    String refreshCriteria = getCriteriaSelected();
-//    presenter.refreshMovies(refreshCriteria);
+    presenter.refreshMovies(getCriteriaSelected());
   }
 
   @NonNull
@@ -126,11 +111,11 @@ public class MainActivity extends AppCompatActivity implements MainView, MainVie
   }
 
   @Override
-  public void showMovies(List<Movie> movies) {
+  public void showMovies(Cursor movies) {
     movieGrid.setVisibility(View.VISIBLE);
     textViewNoMovies.setVisibility(View.GONE);
-    //TODO review this
-//    mainViewAdapter.setMovies(movies);
+    mainViewAdapter.setCursor(movies);
+    movieGrid.scrollToPosition(RecyclerView.NO_POSITION);
 
   }
 
@@ -175,9 +160,7 @@ public class MainActivity extends AppCompatActivity implements MainView, MainVie
   public void onSaveInstanceState(Bundle outState) {
     super.onSaveInstanceState(outState);
     movieGridState = movieGrid.getLayoutManager().onSaveInstanceState();
-    //TODO review this to save the state
     outState.putParcelable(LAYOUT_MANAGER_STATE, movieGridState);
-//    outState.putParcelableArrayList(MOVIES_STATE, new ArrayList<Parcelable>(mainViewAdapter.getMovies()));
   }
 
   @Override
@@ -186,12 +169,6 @@ public class MainActivity extends AppCompatActivity implements MainView, MainVie
     if (savedInstanceState != null) {
       Parcelable savedRecyclerLayoutState = savedInstanceState.getParcelable(LAYOUT_MANAGER_STATE);
       movieGrid.getLayoutManager().onRestoreInstanceState(savedRecyclerLayoutState);
-      ArrayList<Movie> parcelableArrayList = savedInstanceState.<Movie>getParcelableArrayList(MOVIES_STATE);
-      if (parcelableArrayList == null || parcelableArrayList.size() == 0) {
-        refreshSelected();
-      }
-      //TODO review this to save the state
-//      mainViewAdapter.setMovies(parcelableArrayList);
     }
   }
 
@@ -201,31 +178,4 @@ public class MainActivity extends AppCompatActivity implements MainView, MainVie
     return (int) (dpWidth / SCALING_FACTOR);
   }
 
-  //TODO Is the loader callback the main place?
-  @Override
-  public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-    if (MOVIE_LOADER_ID != id) {
-      return null;
-    }
-
-//        String sortOrder = WeatherContract.WeatherEntry.COLUMN_DATE + " ASC";
-//        String selection = WeatherContract.WeatherEntry.getSqlSelectForTodayOnwards();
-
-    return new CursorLoader(this, CONTENT_URI, ALL_COLUMS, null, null, null);
-  }
-
-  @Override
-  public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-    mainViewAdapter.setCursor(data);
-//    mForecastAdapter.swapCursor(data);
-//    if (mPosition == RecyclerView.NO_POSITION) mPosition = 0;
-//    mRecyclerView.smoothScrollToPosition(mPosition);
-//    if (data.getCount() != 0) showWeatherDataView();
-
-  }
-
-  @Override
-  public void onLoaderReset(Loader<Cursor> loader) {
-    mainViewAdapter.setCursor(null);
-  }
 }

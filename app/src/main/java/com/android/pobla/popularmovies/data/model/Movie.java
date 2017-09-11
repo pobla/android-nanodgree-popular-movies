@@ -1,10 +1,10 @@
 package com.android.pobla.popularmovies.data.model;
 
 
-import android.database.Cursor;
 import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.text.TextUtils;
 
 import com.google.gson.annotations.SerializedName;
 
@@ -131,20 +131,13 @@ public class Movie implements Parcelable {
     return genreIds;
   }
 
-  //TODO create a better way and the other way around
-  public String getGenreIdsAsString() {
-    if (genreIds != null && genreIds.size() > 0) {
-      StringBuilder stBfr = new StringBuilder();
-      for (int i = 0; i < genreIds.size(); i++) {
-        stBfr.append(genreIds.get(i));
-        stBfr.append(",");
-      }
-      stBfr.setLength(stBfr.length() - 1);//remove last ,
-      return stBfr.toString();
-    }
-    return "";
+  public boolean hasGenreIds() {
+    return genreIds != null && genreIds.size() > 0;
   }
 
+  public String getGenreIdsAsString() {
+    return hasGenreIds() ? TextUtils.join(",", genreIds) : "";
+  }
 
   public void setGenreIds(List<Integer> genreIds) {
     this.genreIds = genreIds;
@@ -286,6 +279,15 @@ public class Movie implements Parcelable {
       return new Movie[size];
     }
   };
+
+  public void setGenreIds(String commaSeparatedGenreIds) {
+    String[] split = commaSeparatedGenreIds.split(",");
+    List<Integer> genreIds = new ArrayList<>(split.length);
+    for (int i = 0; i < split.length; i++) {
+      genreIds.add(Integer.valueOf(split[i]));
+    }
+    this.setGenreIds(genreIds);
+  }
 
   public static class Sizes {
 

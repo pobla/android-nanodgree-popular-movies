@@ -12,6 +12,8 @@ import android.support.annotation.Nullable;
 
 import com.android.pobla.popularmovies.data.MovieContract.MovieEntry;
 
+import static com.android.pobla.popularmovies.data.MovieContract.MovieEntry.TABLE_NAME;
+
 public class MovieProvider extends ContentProvider {
 
   public static final int CODE_MOVIES = 100;
@@ -40,43 +42,35 @@ public class MovieProvider extends ContentProvider {
   @Nullable
   @Override
   public Cursor query(@NonNull Uri uri, @Nullable String[] projection, @Nullable String selection, @Nullable String[] selectionArgs, @Nullable String sortOrder) {
-    Cursor cursor;
-    //TODO review this code
     switch (sUriMatcher.match(uri)) {
       case CODE_MOVIE_WITH_ID: {
-        String normalizedUtcDateString = uri.getLastPathSegment();
-        String[] selectionArguments = new String[]{normalizedUtcDateString};
-
-        cursor = dbHelper.getReadableDatabase().query(
-          MovieContract.MovieEntry.TABLE_NAME,
-          projection,
-          MovieEntry._ID + " = ? ",
-          selectionArguments,
-          null,
-          null,
-          sortOrder);
-
-        break;
+        return queryById(uri, projection, sortOrder);
       }
       case CODE_MOVIES: {
-        cursor = dbHelper.getReadableDatabase().query(
-          MovieContract.MovieEntry.TABLE_NAME,
-          projection,
-          selection,
-          selectionArgs,
-          null,
-          null,
-          sortOrder);
-        break;
+        return queryAll(uri, projection, selection, selectionArgs, sortOrder);
       }
-
       default:
         throw new UnsupportedOperationException("Unknown uri: " + uri);
     }
+  }
 
+  private Cursor queryAll(@NonNull Uri uri, @Nullable String[] projection, @Nullable String selection, @Nullable String[] selectionArgs, @Nullable String sortOrder) {
+    Cursor cursor = dbHelper.getReadableDatabase().query(
+      TABLE_NAME,
+      projection,
+      selection,
+      selectionArgs,
+      null,
+      null,
+      sortOrder);
     cursor.setNotificationUri(getContext().getContentResolver(), uri);
     return cursor;
+  }
 
+  private Cursor queryById(@NonNull Uri uri, @Nullable String[] projection, @Nullable String sortOrder) {
+    String normalizedUtcDateString = uri.getLastPathSegment();
+    String[] selectionArguments = new String[]{normalizedUtcDateString};
+    return queryAll(uri, projection, MovieEntry._ID + " = ? ", selectionArguments, sortOrder);
   }
 
   @Nullable
@@ -94,38 +88,39 @@ public class MovieProvider extends ContentProvider {
   @Override
   public int bulkInsert(@NonNull Uri uri, @NonNull ContentValues[] values) {
     final SQLiteDatabase db = dbHelper.getWritableDatabase();
-//TODO review and this one
-    switch (sUriMatcher.match(uri)) {
 
-      case CODE_MOVIES:
-        db.beginTransaction();
-        int rowsInserted = 0;
-        try {
-          for (ContentValues value : values) {
-            long _id = db.insert(MovieContract.MovieEntry.TABLE_NAME, null, value);
-            if (_id != -1) {
-              rowsInserted++;
-            }
+    if (sUriMatcher.match(uri) == CODE_MOVIES) {
+      db.beginTransaction();
+      int rowsInserted = 0;
+      try {
+        for (ContentValues value : values) {
+          long _id = db.insert(TABLE_NAME, null, value);
+          if (_id != -1) {
+            rowsInserted++;
           }
-          db.setTransactionSuccessful();
-        } finally {
-          db.endTransaction();
         }
+        db.setTransactionSuccessful();
+      } finally {
+        db.endTransaction();
+      }
 
-        if (rowsInserted > 0) {
-          getContext().getContentResolver().notifyChange(uri, null);
-        }
+      if (rowsInserted > 0) {
+        getContext().getContentResolver().notifyChange(uri, null);
+      }
 
-        return rowsInserted;
-
-      default:
-        return super.bulkInsert(uri, values);
+      return rowsInserted;
+    } else {
+      return super.bulkInsert(uri, values);
     }
 
   }
 
   @Override
   public int delete(@NonNull Uri uri, @Nullable String selection, @Nullable String[] selectionArgs) {
+    if (sUriMatcher.match(uri) == CODE_MOVIES) {
+      SQLiteDatabase writableDatabase = dbHelper.getWritableDatabase();
+      return writableDatabase.delete(TABLE_NAME, selection, selectionArgs);
+    }
     return 0;
   }
 
