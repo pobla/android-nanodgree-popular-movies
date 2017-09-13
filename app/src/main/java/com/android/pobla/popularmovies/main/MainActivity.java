@@ -24,14 +24,13 @@ import com.android.pobla.popularmovies.data.model.Movie;
 import com.android.pobla.popularmovies.detail.view.MovieDetailActivity;
 import com.android.pobla.popularmovies.main.presenter.DefaultMainViewPresenter;
 import com.android.pobla.popularmovies.main.presenter.MainViewPresenter;
+import com.android.pobla.popularmovies.main.presenter.MainViewPresenter.MovieViewSelection;
 import com.android.pobla.popularmovies.main.view.MainView;
 import com.android.pobla.popularmovies.main.view.MainViewAdapter;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-import static com.android.pobla.popularmovies.main.presenter.MainViewPresenter.POPULARITY;
-import static com.android.pobla.popularmovies.main.presenter.MainViewPresenter.TOP_RATED;
 
 public class MainActivity extends AppCompatActivity implements MainView, MainViewAdapter.ItemClickListener {
 
@@ -68,7 +67,7 @@ public class MainActivity extends AppCompatActivity implements MainView, MainVie
   @Override
   public boolean onCreateOptionsMenu(Menu menu) {
     getMenuInflater().inflate(R.menu.main_menu, menu);
-    int actionIdSelected = POPULARITY.equals(getCriteriaSelected()) ? R.id.action_popularity : R.id.action_rated;
+    int actionIdSelected = getCriteriaSelected().getActionId();
     menu.findItem(actionIdSelected).setChecked(true);
     return true;
   }
@@ -80,11 +79,15 @@ public class MainActivity extends AppCompatActivity implements MainView, MainVie
         refreshSelected();
         return true;
       case R.id.action_popularity:
-        refreshView(POPULARITY);
+        refreshView(MovieViewSelection.POPULARITY);
         item.setChecked(true);
         return true;
       case R.id.action_rated:
-        refreshView(TOP_RATED);
+        refreshView(MovieViewSelection.TOP_RATED);
+        item.setChecked(true);
+        return true;
+      case R.id.action_favourite:
+        refreshView(MovieViewSelection.FAVOURITE);
         item.setChecked(true);
         return true;
       default:
@@ -92,11 +95,11 @@ public class MainActivity extends AppCompatActivity implements MainView, MainVie
     }
   }
 
-  private void refreshView(String sortCriteria) {
+  private void refreshView(MovieViewSelection sortCriteria) {
     presenter.refreshMovies(sortCriteria);
     SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
     Editor edit = sharedPref.edit();
-    edit.putString(SORT_CRITERIA, sortCriteria);
+    edit.putString(SORT_CRITERIA, sortCriteria.getValue());
     edit.apply();
   }
 
@@ -106,9 +109,10 @@ public class MainActivity extends AppCompatActivity implements MainView, MainVie
   }
 
   @NonNull
-  private String getCriteriaSelected() {
+  private MovieViewSelection getCriteriaSelected() {
     SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
-    return sharedPref.getString(SORT_CRITERIA, TOP_RATED);
+    String string = sharedPref.getString(SORT_CRITERIA, MovieViewSelection.TOP_RATED.getValue());
+    return MovieViewSelection.getFromValue(string);
   }
 
   @Override

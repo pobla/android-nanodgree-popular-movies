@@ -4,12 +4,13 @@
 
   <item
     android:id="@+id/action_refresh"
-    app:showAsAction="ifRoom"
     android:icon="@drawable/ic_cached_white_24dp"
-    android:title="@string/mainMenu_refresh">
+    android:title="@string/mainMenu_refresh"
+    app:showAsAction="ifRoom">
   </item>
-  <group android:checkableBehavior="single"
-    android:id="@+id/menu_group_selected">
+  <group
+    android:id="@+id/menu_group_selected"
+    android:checkableBehavior="single">
     <item
       android:id="@+id/action_rated"
       android:orderInCategory="1"
@@ -18,5 +19,9 @@
       android:id="@+id/action_popularity"
       android:orderInCategory="2"
       android:title="@string/mainMenu_mostPopular"/>
+    <item
+      android:id="@+id/action_favourite"
+      android:orderInCategory="2"
+      android:title="@string/mainMenu_favourite"/>
   </group>
 </menu>

@@ -25,8 +25,8 @@ public class DefaultMainViewPresenter implements MainViewPresenter {
   }
 
   @Override
-  public void refreshMovies(String method) {
-    MovieSyncService.startImmediateSync(context, buildMovieListUrl(method));
+  public void refreshMovies(MovieViewSelection method) {
+    MovieSyncService.startImmediateSync(context, buildMovieListUrl(method.getValue()));
   }
 
   @Override

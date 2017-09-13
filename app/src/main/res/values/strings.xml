@@ -2,6 +2,7 @@
   <string name="app_name">Popular Movies</string>
   <string name="mainMenu_topRated">Top Rated</string>
   <string name="mainMenu_mostPopular">Most Popular</string>
+  <string name="mainMenu_favourite">Favourite</string>
   <string name="all_title_loading">Loading movies</string>
   <string name="all_loading_message">Refreshing content, please wait.</string>
   <string name="all_generic_error">Something went wrong, please try again later</string>
