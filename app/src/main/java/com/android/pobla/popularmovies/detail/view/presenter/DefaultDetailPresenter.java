@@ -47,8 +47,8 @@ public class DefaultDetailPresenter implements DetailPresenter{
   }
 
   @Override
-  public void addFavourite() {
-    movie.setFavourite(true);
+  public void toggleFav() {
+    movie.setFavourite(!movie.isFavourite());
     context.getContentResolver().update(uri, MovieEntry.toContentValue(movie), null, null);
 
   }

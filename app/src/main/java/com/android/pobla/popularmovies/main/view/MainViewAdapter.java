@@ -41,14 +41,16 @@ public class MainViewAdapter extends Adapter<MovieViewHolder> {
 
   @Override
   public void onBindViewHolder(MovieViewHolder holder, int position) {
-    cursor.moveToPosition(position);
-    Movie movie = MovieEntry.toMovie(cursor);
-    Picasso.with(holder.moviePoster.getContext())
-      .load(buildImageUrl(movie))
-      .placeholder(R.drawable.ic_autorenew_black_24dp)
-      .error(R.drawable.ic_error_outline_black_24dp)
-      .into(holder.moviePoster);
-    holder.movieTitle.setText(movie.getTitle());
+    if(cursor != null && !cursor.isClosed()) {
+      cursor.moveToPosition(position);
+      Movie movie = MovieEntry.toMovie(cursor);
+      Picasso.with(holder.moviePoster.getContext())
+        .load(buildImageUrl(movie))
+        .placeholder(R.drawable.ic_autorenew_black_24dp)
+        .error(R.drawable.ic_error_outline_black_24dp)
+        .into(holder.moviePoster);
+      holder.movieTitle.setText(movie.getTitle());
+    }
 
   }
 

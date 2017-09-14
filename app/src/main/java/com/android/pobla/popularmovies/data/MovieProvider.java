@@ -12,6 +12,7 @@ import android.support.annotation.Nullable;
 
 import com.android.pobla.popularmovies.data.MovieContract.MovieEntry;
 
+import static com.android.pobla.popularmovies.data.MovieContract.MovieEntry.COLUMN_FAVOURITE;
 import static com.android.pobla.popularmovies.data.MovieContract.MovieEntry.TABLE_NAME;
 
 public class MovieProvider extends ContentProvider {
@@ -68,9 +69,8 @@ public class MovieProvider extends ContentProvider {
   }
 
   private Cursor queryById(@NonNull Uri uri, @Nullable String[] projection, @Nullable String sortOrder) {
-    String normalizedUtcDateString = uri.getLastPathSegment();
-    String[] selectionArguments = new String[]{normalizedUtcDateString};
-    return queryAll(uri, projection, MovieEntry._ID + " = ? ", selectionArguments, sortOrder);
+    String[] selectionArguments = getMovieIdFromUri(uri);
+    return queryAll(uri, projection, MovieEntry._ID + MovieDbHelper.SQL_EQUALS_TO, selectionArguments, sortOrder);
   }
 
   @Nullable
@@ -94,7 +94,8 @@ public class MovieProvider extends ContentProvider {
       int rowsInserted = 0;
       try {
         for (ContentValues value : values) {
-          long _id = db.insertOrThrow(TABLE_NAME, null, value);
+          updateFavouriteField(db, value);
+          long _id = db.replace(TABLE_NAME, null, value);
           if (_id != -1) {
             rowsInserted++;
           }
@@ -103,16 +104,19 @@ public class MovieProvider extends ContentProvider {
       } finally {
         db.endTransaction();
       }
-
-      if (rowsInserted > 0) {
-        getContext().getContentResolver().notifyChange(uri, null);
-      }
-
-      return rowsInserted;
+      return notifyContentResolverIfChanged(uri, rowsInserted);
     } else {
       return super.bulkInsert(uri, values);
     }
 
+  }
+
+  private void updateFavouriteField(SQLiteDatabase db, ContentValues value) {
+    Cursor query = db.query(TABLE_NAME, new String[]{COLUMN_FAVOURITE}, MovieEntry._ID + MovieDbHelper.SQL_EQUALS_TO, new String[]{value.getAsString(MovieEntry._ID)}, null, null, null);
+    if(query.moveToNext()){
+      value.put(COLUMN_FAVOURITE, query.getInt(0));
+    }
+    query.close();
   }
 
   @Override
@@ -127,15 +131,24 @@ public class MovieProvider extends ContentProvider {
   @Override
   public int update(@NonNull Uri uri, @Nullable ContentValues values, @Nullable String selection, @Nullable String[] selectionArgs) {
     if (sUriMatcher.match(uri) == CODE_MOVIE_WITH_ID) {
-      String normalizedUtcDateString = uri.getLastPathSegment();
-      String[] selectionArguments = new String[]{normalizedUtcDateString};
+      String[] selectionArguments = getMovieIdFromUri(uri);
       SQLiteDatabase writableDatabase = dbHelper.getWritableDatabase();
-      int update = writableDatabase.update(TABLE_NAME, values, MovieEntry._ID + " = ? ", selectionArguments);
-      if (update > 0) {
-        getContext().getContentResolver().notifyChange(uri, null);
-      }
-      return update;
+      int update = writableDatabase.update(TABLE_NAME, values, MovieEntry._ID + MovieDbHelper.SQL_EQUALS_TO, selectionArguments);
+      return notifyContentResolverIfChanged(uri, update);
     }
     return 0;
+  }
+
+  @NonNull
+  private String[] getMovieIdFromUri(@NonNull Uri uri) {
+    String movieId = uri.getLastPathSegment();
+    return new String[]{movieId};
+  }
+
+  private int notifyContentResolverIfChanged(@NonNull Uri uri, int resultCount) {
+    if (resultCount > 0) {
+      getContext().getContentResolver().notifyChange(uri, null);
+    }
+    return resultCount;
   }
 }

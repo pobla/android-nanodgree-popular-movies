@@ -10,5 +10,5 @@ public interface DetailPresenter extends LoaderCallbacks<Cursor> {
 
   void getListOfTrailers();
 
-  void addFavourite();
+  void toggleFav();
 }

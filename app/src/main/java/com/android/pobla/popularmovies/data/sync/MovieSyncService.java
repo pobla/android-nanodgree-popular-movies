@@ -2,15 +2,15 @@ package com.android.pobla.popularmovies.data.sync;
 
 
 import android.app.IntentService;
-import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.util.Log;
 
-import com.android.pobla.popularmovies.data.MovieContract;
 import com.android.pobla.popularmovies.data.MovieContract.MovieEntry;
+import com.android.pobla.popularmovies.data.MovieDbHelper;
 import com.android.pobla.popularmovies.data.model.Movie;
 import com.android.pobla.popularmovies.data.model.MoviesResponse;
 import com.google.gson.Gson;
@@ -25,7 +25,9 @@ import java.util.List;
 import static com.android.pobla.popularmovies.data.model.MovieDbUrlBuilder.UTF_8;
 
 public class MovieSyncService extends IntentService {
+
   private static final String URL = "url";
+  private static final String TYPE = "type";
 
   private final Gson gsonMapper = new Gson();
 
@@ -36,33 +38,48 @@ public class MovieSyncService extends IntentService {
   @Override
   protected void onHandleIntent(@Nullable Intent intent) {
     URL url = (java.net.URL) intent.getExtras().get(URL);
+    String type = intent.getExtras().getString(TYPE);
     try {
-      URLConnection urlConnection = url.openConnection();
-      InputStream content = (InputStream) urlConnection.getContent();
-      MoviesResponse moviesResponse = gsonMapper.fromJson(new InputStreamReader(content, UTF_8), MoviesResponse.class);
-      ContentValues[] contentValues = moviesToContentsValues(moviesResponse);
-      ContentResolver contentResolver = getContentResolver();
-      contentResolver.delete(MovieContract.MovieEntry.CONTENT_URI, null, null);
-      contentResolver.bulkInsert(MovieContract.MovieEntry.CONTENT_URI, contentValues);
-      return;
+      MoviesResponse moviesResponse = doRequest(url);
+      ContentValues[] contentValues = moviesToContentsValues(moviesResponse, type);
+      removeNotFavouritedMovies();
+      storeMovies(contentValues);
     } catch (IOException e) {
-      e.printStackTrace();
+      Log.e(this.getClass().toString(), "An error occurred requesting movies", e);
     }
-
   }
 
-  private ContentValues[] moviesToContentsValues(MoviesResponse moviesResponse) {
+
+  private MoviesResponse doRequest(URL url) throws IOException {
+    URLConnection urlConnection = url.openConnection();
+    InputStream content = (InputStream) urlConnection.getContent();
+    return gsonMapper.fromJson(new InputStreamReader(content, UTF_8), MoviesResponse.class);
+  }
+
+  private void removeNotFavouritedMovies() {
+    getContentResolver().delete(MovieEntry.CONTENT_URI, MovieEntry.COLUMN_FAVOURITE + MovieDbHelper.SQL_EQUALS_TO, new String[]{MovieDbHelper.FALSE.toString()});
+  }
+
+  private void storeMovies(ContentValues[] contentValues) {
+    getContentResolver().bulkInsert(MovieEntry.CONTENT_URI, contentValues);
+  }
+
+  private ContentValues[] moviesToContentsValues(MoviesResponse moviesResponse, String type) {
     List<Movie> results = moviesResponse.getResults();
     ContentValues[] contentValuesArray = new ContentValues[results.size()];
     for (int i = 0; i < results.size(); i++) {
-      contentValuesArray[i] = MovieEntry.toContentValue(results.get(i));
+      Movie movie = results.get(i);
+      movie.setType(type);
+      contentValuesArray[i] = MovieEntry.toContentValue(movie);
+
     }
     return contentValuesArray;
   }
 
-  public static void startImmediateSync(@NonNull final Context context, URL url) {
+  public static void startImmediateSync(@NonNull final Context context, URL url, String type) {
     Intent intentToSyncImmediately = new Intent(context, MovieSyncService.class);
     intentToSyncImmediately.putExtra(URL, url);
+    intentToSyncImmediately.putExtra(TYPE, type);
     context.startService(intentToSyncImmediately);
   }
 }

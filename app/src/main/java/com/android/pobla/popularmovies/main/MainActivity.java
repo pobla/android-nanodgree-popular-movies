@@ -54,13 +54,11 @@ public class MainActivity extends AppCompatActivity implements MainView, MainVie
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_main);
     ButterKnife.bind(this);
-    presenter = new DefaultMainViewPresenter(this, this);
+    presenter = new DefaultMainViewPresenter(this, this, getSupportLoaderManager());
 
     mainViewAdapter = new MainViewAdapter(this);
     movieGrid.setLayoutManager(new GridLayoutManager(this, calculateNoOfColumns()));
     movieGrid.setAdapter(mainViewAdapter);
-
-    getSupportLoaderManager().initLoader(MainViewPresenter.MOVIE_LOADER_ID, null, presenter);
   }
 
 
@@ -126,13 +124,14 @@ public class MainActivity extends AppCompatActivity implements MainView, MainVie
 
   @Override
   public void cancelLoadingDialog() {
-    if (progressDialog != null) {
+    if (progressDialog != null && progressDialog.isShowing()) {
       progressDialog.cancel();
     }
   }
 
   @Override
   public void showLoadingDialog() {
+    cancelLoadingDialog();
     progressDialog = new ProgressDialog(this);
     progressDialog.setTitle(getString(R.string.all_title_loading));
     progressDialog.setMessage(getString(R.string.all_loading_message));

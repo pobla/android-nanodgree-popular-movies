@@ -93,7 +93,7 @@
       />
 
 
-    <Button
+    <CheckBox
       android:id="@+id/button_detail_addFav"
       android:text="@string/detail_addFav"
       android:layout_width="match_parent"

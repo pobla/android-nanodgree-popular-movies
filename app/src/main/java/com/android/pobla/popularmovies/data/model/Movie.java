@@ -56,6 +56,7 @@ public class Movie implements Parcelable {
   private String releaseDate;
 
   private boolean favourite;
+  private String type;
 
   public int getVoteCount() {
     return voteCount;
@@ -185,6 +186,14 @@ public class Movie implements Parcelable {
     this.favourite = favourite;
   }
 
+  public void setType(String type) {
+    this.type = type;
+  }
+
+  public String getType() {
+    return type;
+  }
+
   @Override
   public boolean equals(Object o) {
     if (this == o) return true;
@@ -212,6 +221,7 @@ public class Movie implements Parcelable {
     if (adult != null ? !adult.equals(movie.adult) : movie.adult != null) return false;
     if (overview != null ? !overview.equals(movie.overview) : movie.overview != null) return false;
     if (favourite != movie.favourite) return false;
+    if (type != null ? !type.equals(movie.type) : movie.type != null) return false;
     return releaseDate != null ? releaseDate.equals(movie.releaseDate) : movie.releaseDate == null;
 
   }
@@ -232,6 +242,7 @@ public class Movie implements Parcelable {
     result = 31 * result + (adult != null ? adult.hashCode() : 0);
     result = 31 * result + (overview != null ? overview.hashCode() : 0);
     result = 31 * result + (releaseDate != null ? releaseDate.hashCode() : 0);
+    result = 31 * result + (type != null ? type.hashCode() : 0);
     result = 31 * result + (this.favourite ?  1 : 0);
     return result;
   }
@@ -258,6 +269,7 @@ public class Movie implements Parcelable {
     dest.writeString(this.overview);
     dest.writeString(this.releaseDate);
     dest.writeByte(this.favourite ? (byte) 1 : (byte) 0);
+    dest.writeString(this.type);
   }
 
   public Movie() {
@@ -280,6 +292,7 @@ public class Movie implements Parcelable {
     this.overview = in.readString();
     this.releaseDate = in.readString();
     this.favourite = in.readByte() != 0;
+    this.type = in.readString();
   }
 
   public static final Creator<Movie> CREATOR = new Creator<Movie>() {

@@ -34,22 +34,24 @@ public class MovieContract {
     public static final String COLUMN_OVERVIEW = "overview";
     public static final String COLUMN_RELEASE_DATE = "release_date";
     public static final String COLUMN_FAVOURITE = "favourite";
+    public static final String COLUMN_TYPE = "type";
 
-    private static final int IDX_ID = 0;
-    private static final int IDX_VOTE_COUNT = 1;
-    private static final int IDX_VIDEO = 2;
-    private static final int IDX_VOTE_AVERAGE = 3;
-    private static final int IDX_TITLE = 4;
-    private static final int IDX_POPULARITY = 5;
-    private static final int IDX_POSTER_PATH = 6;
-    private static final int IDX_ORIGINAL_LANGUAGE = 7;
-    private static final int IDX_ORIGINAL_TITLE = 8;
-    private static final int IDX_GENRE_IDS = 9;
-    private static final int IDX_BACKDROP_PATH = 10;
-    private static final int IDX_ADULT = 11;
-    private static final int IDX_OVERVIEW = 12;
-    private static final int IDX_RELEASE_DATE = 13;
-    private static final int IDX_FAVOURITE = 14;
+    protected static final int IDX_ID = 0;
+    protected static final int IDX_VOTE_COUNT = 1;
+    protected static final int IDX_VIDEO = 2;
+    protected static final int IDX_VOTE_AVERAGE = 3;
+    protected static final int IDX_TITLE = 4;
+    protected static final int IDX_POPULARITY = 5;
+    protected static final int IDX_POSTER_PATH = 6;
+    protected static final int IDX_ORIGINAL_LANGUAGE = 7;
+    protected static final int IDX_ORIGINAL_TITLE = 8;
+    protected static final int IDX_GENRE_IDS = 9;
+    protected static final int IDX_BACKDROP_PATH = 10;
+    protected static final int IDX_ADULT = 11;
+    protected static final int IDX_OVERVIEW = 12;
+    protected static final int IDX_RELEASE_DATE = 13;
+    protected static final int IDX_FAVOURITE = 14;
+    protected static final int IDX_TYPE = 15;
 
     public static final String[] ALL_COLUMS = {
       _ID,
@@ -66,7 +68,8 @@ public class MovieContract {
       COLUMN_ADULT,
       COLUMN_OVERVIEW,
       COLUMN_RELEASE_DATE,
-      COLUMN_FAVOURITE
+      COLUMN_FAVOURITE,
+      COLUMN_TYPE
     };
 
     public static final Uri CONTENT_URI = BASE_CONTENT_URI.buildUpon()
@@ -83,7 +86,7 @@ public class MovieContract {
       Movie movie = new Movie();
       movie.setId(cursor.getInt(IDX_ID));
       movie.setVoteCount(cursor.getInt(IDX_VOTE_COUNT));
-      movie.setVideo(cursor.getInt(IDX_VIDEO) == 1);
+      movie.setVideo(cursor.getInt(IDX_VIDEO) == MovieDbHelper.TRUE);
       movie.setVoteAverage(cursor.getDouble(IDX_VOTE_AVERAGE));
       movie.setTitle(cursor.getString(IDX_TITLE));
       movie.setPopularity(cursor.getDouble(IDX_POPULARITY));
@@ -92,10 +95,11 @@ public class MovieContract {
       movie.setOriginalTitle(cursor.getString(IDX_ORIGINAL_TITLE));
       movie.setGenreIds(cursor.getString(IDX_GENRE_IDS));
       movie.setBackdropPath(cursor.getString(IDX_BACKDROP_PATH));
-      movie.setAdult(cursor.getInt(IDX_ADULT) == 1);
+      movie.setAdult(cursor.getInt(IDX_ADULT) == MovieDbHelper.TRUE);
       movie.setOverview(cursor.getString(IDX_OVERVIEW));
       movie.setReleaseDate(cursor.getString(IDX_RELEASE_DATE));
-      movie.setFavourite(cursor.getInt(IDX_FAVOURITE) == 1);
+      movie.setFavourite(cursor.getInt(IDX_FAVOURITE) == MovieDbHelper.TRUE);
+      movie.setType(cursor.getString(IDX_TYPE));
       return movie;
     }
 
@@ -116,6 +120,7 @@ public class MovieContract {
       contentValues.put(COLUMN_OVERVIEW, movie.getOverview());
       contentValues.put(COLUMN_RELEASE_DATE, movie.getReleaseDate());
       contentValues.put(COLUMN_FAVOURITE, movie.isFavourite());
+      contentValues.put(COLUMN_TYPE, movie.getType());
       return contentValues;
     }
   }

@@ -1,7 +1,6 @@
 package com.android.pobla.popularmovies.detail.view;
 
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
@@ -12,6 +11,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -45,7 +45,7 @@ public class MovieDetailActivity extends AppCompatActivity implements DetailView
   @BindView(R.id.button_detail_showTrailer)
   Button showDetail;
   @BindView(R.id.button_detail_addFav)
-  Button addFav;
+  CheckBox addFav;
 
   private DetailPresenter presenter;
   private ProgressDialog progressDialog;
@@ -73,6 +73,7 @@ public class MovieDetailActivity extends AppCompatActivity implements DetailView
     moviePlot.setText(movie.getOverview());
     releaseDate.setText(movie.getReleaseDate());
     userRating.setText(movie.getVoteAverage() != null ? movie.getVoteAverage().toString() : " - ");
+    addFav.setChecked(movie.isFavourite());
 
     showDetail.setOnClickListener(new OnClickListener() {
       @Override
@@ -83,7 +84,7 @@ public class MovieDetailActivity extends AppCompatActivity implements DetailView
     addFav.setOnClickListener(new OnClickListener() {
       @Override
       public void onClick(View v) {
-        presenter.addFavourite();
+        presenter.toggleFav();
       }
     });
 

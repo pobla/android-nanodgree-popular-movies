@@ -10,8 +10,12 @@ import com.android.pobla.popularmovies.data.MovieContract.MovieEntry;
 public class MovieDbHelper extends SQLiteOpenHelper {
 
 
+  public static final String SQL_EQUALS_TO = "= ?";
+  public static final Integer TRUE =  1;
+  public static final Integer FALSE = 0;
+
   private static final String DATABASE_NAME = "movies.db";
-  private static final int DATABASE_VERSION = 3;
+  private static final int DATABASE_VERSION = 6;
 
   public MovieDbHelper(Context context) {
     super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -34,7 +38,9 @@ public class MovieDbHelper extends SQLiteOpenHelper {
                                       MovieEntry.COLUMN_ADULT + " BOOLEAN NOT NULL, " +
                                       MovieEntry.COLUMN_OVERVIEW + " STRING NOT NULL, " +
                                       MovieEntry.COLUMN_RELEASE_DATE + " String NOT NULL, "+
-                                      MovieEntry.COLUMN_FAVOURITE + " BOOLEAN NOT NULL );";
+                                      MovieEntry.COLUMN_FAVOURITE + " BOOLEAN NOT NULL, " +
+                                      MovieEntry.COLUMN_TYPE + " STRING NOT NULL " +
+                                ");";
 
     db.execSQL(SQL_CREATE_TABLE);
 
