@@ -5,7 +5,7 @@ import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 
-public class MovieReviewsResponse {
+public class MovieReviewsResponse implements HasResults<Reviews > {
 
   @SerializedName("id")
   private int id;

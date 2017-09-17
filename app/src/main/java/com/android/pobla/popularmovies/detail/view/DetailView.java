@@ -20,4 +20,6 @@ public interface DetailView {
   void showTrailers(List<MovieVideos> results);
 
   void showReviews(List<Reviews> results);
+
+  void showNoItemsDialog();
 }

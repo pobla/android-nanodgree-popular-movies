@@ -4,35 +4,27 @@ package com.android.pobla.popularmovies.detail.view.presenter;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 
 import com.android.pobla.popularmovies.data.MovieContract.MovieEntry;
-import com.android.pobla.popularmovies.data.model.MovieReviewsResponse;
-import com.android.pobla.popularmovies.detail.view.DetailView;
 import com.android.pobla.popularmovies.data.model.Movie;
 import com.android.pobla.popularmovies.data.model.MovieDbUrlBuilder;
+import com.android.pobla.popularmovies.data.model.MovieReviewsResponse;
 import com.android.pobla.popularmovies.data.model.MovieVideosResponse;
-import com.google.gson.Gson;
+import com.android.pobla.popularmovies.detail.view.DetailView;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.net.URL;
-import java.net.URLConnection;
 
 import static com.android.pobla.popularmovies.data.MovieContract.MovieEntry.ALL_COLUMS;
-import static com.android.pobla.popularmovies.data.model.MovieDbUrlBuilder.UTF_8;
 
-public class DefaultDetailPresenter implements DetailPresenter{
+public class DefaultDetailPresenter implements DetailPresenter {
 
   private final DetailView detailView;
   private final Context context;
   private final Uri uri;
   private Movie movie;
-  private Gson gsonMapper = new Gson();
 
   public DefaultDetailPresenter(Context context, DetailView view, Uri uri) {
     this.context = context;
@@ -43,13 +35,13 @@ public class DefaultDetailPresenter implements DetailPresenter{
   @Override
   public void getListOfTrailers() {
     URL url = MovieDbUrlBuilder.buildVideosUrlForMovie(movie.getId());
-    new RetrieveTrailersAsyncTask().execute(url);
+    new RetrieveTrailersAsyncTask(detailView, MovieVideosResponse.class).execute(url);
   }
 
   @Override
   public void getReviews() {
     URL url = MovieDbUrlBuilder.buildReviewsUrlForMovie(movie.getId());
-    new RetrieveReviewsAsyncTask().execute(url);
+    new RetrieveReviewsAsyncTask(detailView, MovieReviewsResponse.class).execute(url);
 
   }
 
@@ -82,74 +74,27 @@ public class DefaultDetailPresenter implements DetailPresenter{
   public void onLoaderReset(Loader<Cursor> loader) {
   }
 
-  private class RetrieveTrailersAsyncTask extends AsyncTask<URL, Void, MovieVideosResponse> {
+  private class RetrieveTrailersAsyncTask extends RetrieveMoviewItemsAbstractAsyncTask<MovieVideosResponse> {
 
-    @Override
-    protected void onPreExecute() {
-      super.onPreExecute();
-      detailView.showLoadingDialog();
+    public RetrieveTrailersAsyncTask(DetailView detailView, Class<MovieVideosResponse> responseType) {
+      super(detailView, responseType);
     }
 
     @Override
-    protected MovieVideosResponse doInBackground(URL... params) {
-      URL url = params[0];
-      try {
-        URLConnection urlConnection = url.openConnection();
-        InputStream content = (InputStream) urlConnection.getContent();
-        return gsonMapper.fromJson(new InputStreamReader(content, UTF_8), MovieVideosResponse.class);
-      } catch (IOException e) {
-        e.printStackTrace();
-      }
-      return null;
-
-    }
-
-    @Override
-    protected void onPostExecute(MovieVideosResponse movieVideosResponse) {
-      super.onPostExecute(movieVideosResponse);
-      detailView.cancelLoadingDialog();
-      if (movieVideosResponse == null || movieVideosResponse.getResults() == null) {
-        detailView.showGenericError();
-      } else {
-        detailView.showTrailers(movieVideosResponse.getResults());
-      }
-
+    protected void onFinish(MovieVideosResponse movieVideosResponse) {
+      detailView.showTrailers(movieVideosResponse.getResults());
     }
   }
 
-  //TODO extract common functionality
-  private class RetrieveReviewsAsyncTask extends AsyncTask<URL, Void, MovieReviewsResponse> {
+  private class RetrieveReviewsAsyncTask extends RetrieveMoviewItemsAbstractAsyncTask<MovieReviewsResponse> {
 
-    @Override
-    protected void onPreExecute() {
-      super.onPreExecute();
-      detailView.showLoadingDialog();
+    public RetrieveReviewsAsyncTask(DetailView detailView, Class<MovieReviewsResponse> responseType) {
+      super(detailView, responseType);
     }
 
     @Override
-    protected MovieReviewsResponse doInBackground(URL... params) {
-      URL url = params[0];
-      try {
-        URLConnection urlConnection = url.openConnection();
-        InputStream content = (InputStream) urlConnection.getContent();
-        return gsonMapper.fromJson(new InputStreamReader(content, UTF_8), MovieReviewsResponse.class);
-      } catch (IOException e) {
-        e.printStackTrace();
-      }
-      return null;
-
-    }
-
-    @Override
-    protected void onPostExecute(MovieReviewsResponse movieVideosResponse) {
-      super.onPostExecute(movieVideosResponse);
-      detailView.cancelLoadingDialog();
-      if (movieVideosResponse == null || movieVideosResponse.getResults() == null) {
-        detailView.showGenericError();
-      } else {
-        detailView.showReviews(movieVideosResponse.getResults());
-      }
-
+    protected void onFinish(MovieReviewsResponse movieVideosResponse) {
+      detailView.showReviews(movieVideosResponse.getResults());
     }
   }
 

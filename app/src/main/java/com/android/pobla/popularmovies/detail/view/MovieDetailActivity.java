@@ -154,6 +154,11 @@ public class MovieDetailActivity extends AppCompatActivity implements DetailView
     });
   }
 
+  @Override
+  public void showNoItemsDialog() {
+    Toast.makeText(this, R.string.detail_no_items_found, Toast.LENGTH_SHORT).show();
+  }
+
   private void launchViewIntent(Uri uri) {
     startActivity(new Intent(Intent.ACTION_VIEW, uri));
   }

@@ -16,6 +16,7 @@
   <string name="detail_dialog_row">[%1$s] %2$s (Res.: %3$dp)</string>
   <string name="detail_addFav">Add to favourites</string>
   <string name="detail_showReviews">Show reviews</string>
+  <string name="detail_no_items_found">No items were found for the selected movie</string>
   <string name="detail_dialog_trailer_title">Click on a clip to watch</string>
   <string name="detail_dialog_review_title">Click on a review to read it</string>
 </resources>
