@@ -34,8 +34,9 @@ public interface MainViewPresenter extends LoaderCallbacks<Cursor> {
     public static MovieViewSelection getFromValue(String value) {
       for (int i = 0; i < MovieViewSelection.values().length; i++) {
         MovieViewSelection movieViewSelection = MovieViewSelection.values()[i];
-        if (movieViewSelection.getValue().equals(value)) ;
-        return movieViewSelection;
+        if (movieViewSelection.getValue().equals(value)) {
+          return movieViewSelection;
+        }
       }
       return FAVOURITE;
     }
