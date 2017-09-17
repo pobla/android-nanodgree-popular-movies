@@ -35,8 +35,6 @@ import static com.android.pobla.popularmovies.data.model.MovieDbUrlBuilder.build
 
 public class MovieDetailActivity extends AppCompatActivity implements DetailView {
 
-  private static final String MOVIE = "MOVIE";
-
   @BindView(R.id.imageView_detail_moviePoster)
   ImageView moviePoster;
   @BindView(R.id.textView_detail_moviePlot)
@@ -178,7 +176,7 @@ public class MovieDetailActivity extends AppCompatActivity implements DetailView
     for (int i = 0; i < results.size(); i++) {
       Reviews item = results.get(i);
       int max = Math.min(stringSize, item.getContent().length());
-      rows[i] = item.getContent().substring(0, max) + "...";
+      rows[i] = getString(R.string.detail_dialog_row_review, item.getContent().substring(0, max));
     }
     return rows;
   }
