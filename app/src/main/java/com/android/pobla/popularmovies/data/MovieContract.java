@@ -36,22 +36,22 @@ public class MovieContract {
     public static final String COLUMN_FAVOURITE = "favourite";
     public static final String COLUMN_TYPE = "type";
 
-    protected static final int IDX_ID = 0;
-    protected static final int IDX_VOTE_COUNT = 1;
-    protected static final int IDX_VIDEO = 2;
-    protected static final int IDX_VOTE_AVERAGE = 3;
-    protected static final int IDX_TITLE = 4;
-    protected static final int IDX_POPULARITY = 5;
-    protected static final int IDX_POSTER_PATH = 6;
-    protected static final int IDX_ORIGINAL_LANGUAGE = 7;
-    protected static final int IDX_ORIGINAL_TITLE = 8;
-    protected static final int IDX_GENRE_IDS = 9;
-    protected static final int IDX_BACKDROP_PATH = 10;
-    protected static final int IDX_ADULT = 11;
-    protected static final int IDX_OVERVIEW = 12;
-    protected static final int IDX_RELEASE_DATE = 13;
-    protected static final int IDX_FAVOURITE = 14;
-    protected static final int IDX_TYPE = 15;
+    static final int IDX_ID = 0;
+    static final int IDX_VOTE_COUNT = 1;
+    static final int IDX_VIDEO = 2;
+    static final int IDX_VOTE_AVERAGE = 3;
+    static final int IDX_TITLE = 4;
+    static final int IDX_POPULARITY = 5;
+    static final int IDX_POSTER_PATH = 6;
+    static final int IDX_ORIGINAL_LANGUAGE = 7;
+    static final int IDX_ORIGINAL_TITLE = 8;
+    static final int IDX_GENRE_IDS = 9;
+    static final int IDX_BACKDROP_PATH = 10;
+    static final int IDX_ADULT = 11;
+    static final int IDX_OVERVIEW = 12;
+    static final int IDX_RELEASE_DATE = 13;
+    static final int IDX_FAVOURITE = 14;
+    static final int IDX_TYPE = 15;
 
     public static final String[] ALL_COLUMS = {
       _ID,

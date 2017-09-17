@@ -102,14 +102,29 @@
       android:textAlignment="center"
       />
 
-    <Button
-      android:id="@+id/button_detail_showTrailer"
-      android:text="@string/detail_showTrailer"
-      android:layout_width="match_parent"
-      android:layout_height="0dp"
-      android:layout_weight="1"
-      android:textAlignment="center"
-      />
+    <LinearLayout android:layout_height="wrap_content"
+                  android:layout_width="match_parent"
+                  android:orientation="horizontal"
+                  android:layout_weight="2"
+      >
+      <Button
+        android:id="@+id/button_detail_showTrailer"
+        android:text="@string/detail_showTrailer"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:textAlignment="center"
+        />
+      <Button
+        android:id="@+id/button_detail_showReviews"
+        android:text="@string/detail_showReviews"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:textAlignment="center"
+        />
+      </LinearLayout>
+
 
   </LinearLayout>
 

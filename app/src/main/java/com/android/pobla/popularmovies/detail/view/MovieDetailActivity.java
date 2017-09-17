@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.DisplayMetrics;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -20,6 +21,7 @@ import com.android.pobla.popularmovies.R;
 import com.android.pobla.popularmovies.data.model.Movie;
 import com.android.pobla.popularmovies.data.model.MovieSizes;
 import com.android.pobla.popularmovies.data.model.MovieVideos;
+import com.android.pobla.popularmovies.data.model.Reviews;
 import com.android.pobla.popularmovies.detail.view.presenter.DefaultDetailPresenter;
 import com.android.pobla.popularmovies.detail.view.presenter.DetailPresenter;
 import com.squareup.picasso.Picasso;
@@ -29,10 +31,11 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
+import static com.android.pobla.popularmovies.data.model.MovieDbUrlBuilder.buildYoutubeUri;
+
 public class MovieDetailActivity extends AppCompatActivity implements DetailView {
 
   private static final String MOVIE = "MOVIE";
-  private static final String YOUTUBE_URL = "http://www.youtube.com/watch?v=%s";
 
   @BindView(R.id.imageView_detail_moviePoster)
   ImageView moviePoster;
@@ -43,7 +46,9 @@ public class MovieDetailActivity extends AppCompatActivity implements DetailView
   @BindView(R.id.textView_detail_userRating)
   TextView userRating;
   @BindView(R.id.button_detail_showTrailer)
-  Button showDetail;
+  Button showTrailer;
+  @BindView(R.id.button_detail_showReviews)
+  Button showReviews;
   @BindView(R.id.button_detail_addFav)
   CheckBox addFav;
 
@@ -75,10 +80,16 @@ public class MovieDetailActivity extends AppCompatActivity implements DetailView
     userRating.setText(movie.getVoteAverage() != null ? movie.getVoteAverage().toString() : " - ");
     addFav.setChecked(movie.isFavourite());
 
-    showDetail.setOnClickListener(new OnClickListener() {
+    showTrailer.setOnClickListener(new OnClickListener() {
       @Override
       public void onClick(View v) {
         presenter.getListOfTrailers();
+      }
+    });
+    showReviews.setOnClickListener(new OnClickListener() {
+      @Override
+      public void onClick(View v) {
+        presenter.getReviews();
       }
     });
     addFav.setOnClickListener(new OnClickListener() {
@@ -117,26 +128,34 @@ public class MovieDetailActivity extends AppCompatActivity implements DetailView
     Toast.makeText(this, R.string.all_generic_error, Toast.LENGTH_SHORT).show();
   }
 
-  @Override
-  public void showTrailers(final List<MovieVideos> results) {
-    AlertDialog.Builder builder = new AlertDialog.Builder(this);
-    String[] dialogRows = buildDialogRows(results);
-    builder.setTitle("Select a clip to watch")
-      .setItems(dialogRows, new DialogInterface.OnClickListener() {
-        public void onClick(DialogInterface dialog, int which) {
-          launchVideoIntent(results.get(which));
 
-        }
-      });
+  private void showListAlertDialog(int title, String[] rows, DialogInterface.OnClickListener itemListener) {
+    AlertDialog.Builder builder = new AlertDialog.Builder(this);
+    builder.setTitle(title);
+    builder.setItems(rows, itemListener);
     builder.create().show();
   }
 
-  private void launchVideoIntent(MovieVideos movieVideos) {
-    startActivity(new Intent(Intent.ACTION_VIEW, buildYoutubeUri(movieVideos)));
+  @Override
+  public void showTrailers(final List<MovieVideos> results) {
+    showListAlertDialog(R.string.detail_dialog_trailer_title, buildDialogRows(results), new DialogInterface.OnClickListener() {
+      public void onClick(DialogInterface dialog, int which) {
+        launchViewIntent(buildYoutubeUri(results.get(which)));
+      }
+    });
   }
 
-  private Uri buildYoutubeUri(MovieVideos movieVideos) {
-    return Uri.parse(String.format(YOUTUBE_URL, movieVideos.getKey()));
+  @Override
+  public void showReviews(final List<Reviews> results) {
+    showListAlertDialog(R.string.detail_dialog_review_title, buildReviewDialogRows(results), new DialogInterface.OnClickListener() {
+      public void onClick(DialogInterface dialog, int which) {
+        launchViewIntent(Uri.parse(results.get(which).getUrl()));
+      }
+    });
+  }
+
+  private void launchViewIntent(Uri uri) {
+    startActivity(new Intent(Intent.ACTION_VIEW, uri));
   }
 
   private String[] buildDialogRows(List<MovieVideos> results) {
@@ -146,5 +165,22 @@ public class MovieDetailActivity extends AppCompatActivity implements DetailView
       rows[i] = getString(R.string.detail_dialog_row, item.getType(), item.getName(), item.getSize());
     }
     return rows;
+  }
+
+  private String[] buildReviewDialogRows(List<Reviews> results) {
+    int stringSize = calculateLengthOfReview();
+    String[] rows = new String[results.size()];
+    for (int i = 0; i < results.size(); i++) {
+      Reviews item = results.get(i);
+      int max = Math.min(stringSize, item.getContent().length());
+      rows[i] = item.getContent().substring(0, max) + "...";
+    }
+    return rows;
+  }
+
+  private int calculateLengthOfReview() {
+    DisplayMetrics displayMetrics = this.getResources().getDisplayMetrics();
+    float dpWidth = displayMetrics.widthPixels / displayMetrics.density / 10;
+    return (int) (dpWidth);
   }
 }

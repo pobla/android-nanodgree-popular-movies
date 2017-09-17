@@ -10,6 +10,7 @@ import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 
 import com.android.pobla.popularmovies.data.MovieContract.MovieEntry;
+import com.android.pobla.popularmovies.data.model.MovieReviewsResponse;
 import com.android.pobla.popularmovies.detail.view.DetailView;
 import com.android.pobla.popularmovies.data.model.Movie;
 import com.android.pobla.popularmovies.data.model.MovieDbUrlBuilder;
@@ -43,6 +44,12 @@ public class DefaultDetailPresenter implements DetailPresenter{
   public void getListOfTrailers() {
     URL url = MovieDbUrlBuilder.buildVideosUrlForMovie(movie.getId());
     new RetrieveTrailersAsyncTask().execute(url);
+  }
+
+  @Override
+  public void getReviews() {
+    URL url = MovieDbUrlBuilder.buildReviewsUrlForMovie(movie.getId());
+    new RetrieveReviewsAsyncTask().execute(url);
 
   }
 
@@ -52,6 +59,7 @@ public class DefaultDetailPresenter implements DetailPresenter{
     context.getContentResolver().update(uri, MovieEntry.toContentValue(movie), null, null);
 
   }
+
 
   @Override
   public Loader<Cursor> onCreateLoader(int id, Bundle args) {
@@ -104,6 +112,42 @@ public class DefaultDetailPresenter implements DetailPresenter{
         detailView.showGenericError();
       } else {
         detailView.showTrailers(movieVideosResponse.getResults());
+      }
+
+    }
+  }
+
+  //TODO extract common functionality
+  private class RetrieveReviewsAsyncTask extends AsyncTask<URL, Void, MovieReviewsResponse> {
+
+    @Override
+    protected void onPreExecute() {
+      super.onPreExecute();
+      detailView.showLoadingDialog();
+    }
+
+    @Override
+    protected MovieReviewsResponse doInBackground(URL... params) {
+      URL url = params[0];
+      try {
+        URLConnection urlConnection = url.openConnection();
+        InputStream content = (InputStream) urlConnection.getContent();
+        return gsonMapper.fromJson(new InputStreamReader(content, UTF_8), MovieReviewsResponse.class);
+      } catch (IOException e) {
+        e.printStackTrace();
+      }
+      return null;
+
+    }
+
+    @Override
+    protected void onPostExecute(MovieReviewsResponse movieVideosResponse) {
+      super.onPostExecute(movieVideosResponse);
+      detailView.cancelLoadingDialog();
+      if (movieVideosResponse == null || movieVideosResponse.getResults() == null) {
+        detailView.showGenericError();
+      } else {
+        detailView.showReviews(movieVideosResponse.getResults());
       }
 
     }
