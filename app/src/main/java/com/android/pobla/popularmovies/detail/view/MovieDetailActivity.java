@@ -3,16 +3,22 @@ package com.android.pobla.popularmovies.detail.view;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.ColorStateList;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.graphics.Palette;
+import android.support.v7.graphics.Palette.PaletteAsyncListener;
 import android.support.v7.widget.Toolbar;
 import android.util.DisplayMetrics;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -24,6 +30,7 @@ import com.android.pobla.popularmovies.data.model.MovieVideos;
 import com.android.pobla.popularmovies.data.model.Reviews;
 import com.android.pobla.popularmovies.detail.view.presenter.DefaultDetailPresenter;
 import com.android.pobla.popularmovies.detail.view.presenter.DetailPresenter;
+import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
@@ -33,7 +40,7 @@ import butterknife.ButterKnife;
 
 import static com.android.pobla.popularmovies.data.model.MovieDbUrlBuilder.buildYoutubeUri;
 
-public class MovieDetailActivity extends AppCompatActivity implements DetailView {
+public class MovieDetailActivity extends AppCompatActivity implements DetailView, Callback, PaletteAsyncListener {
 
   @BindView(R.id.imageView_detail_moviePoster)
   ImageView moviePoster;
@@ -47,8 +54,12 @@ public class MovieDetailActivity extends AppCompatActivity implements DetailView
   Button showTrailer;
   @BindView(R.id.button_detail_showReviews)
   Button showReviews;
-  @BindView(R.id.button_detail_addFav)
-  CheckBox addFav;
+
+  @BindView(R.id.floatingActionButton_detail_addFav)
+  FloatingActionButton floatingActionButton;
+
+  @BindView(R.id.imageBackground)
+  View imageBackgorund;
 
   private DetailPresenter presenter;
   private ProgressDialog progressDialog;
@@ -70,13 +81,13 @@ public class MovieDetailActivity extends AppCompatActivity implements DetailView
   public void bindMovie(Movie movie) {
     Picasso.with(this)
       .load(movie.getImageUrlWithSize(MovieSizes.W500))
-      .into(moviePoster);
+      .into(moviePoster, this);
 
     setTitle(movie.getTitle());
     moviePlot.setText(movie.getOverview());
     releaseDate.setText(movie.getReleaseDate());
     userRating.setText(movie.getVoteAverage() != null ? movie.getVoteAverage().toString() : " - ");
-    addFav.setChecked(movie.isFavourite());
+    floatingActionButton.setActivated(movie.isFavourite());
 
     showTrailer.setOnClickListener(new OnClickListener() {
       @Override
@@ -90,7 +101,7 @@ public class MovieDetailActivity extends AppCompatActivity implements DetailView
         presenter.getReviews();
       }
     });
-    addFav.setOnClickListener(new OnClickListener() {
+    floatingActionButton.setOnClickListener(new OnClickListener() {
       @Override
       public void onClick(View v) {
         presenter.toggleFav();
@@ -185,5 +196,26 @@ public class MovieDetailActivity extends AppCompatActivity implements DetailView
     DisplayMetrics displayMetrics = this.getResources().getDisplayMetrics();
     float dpWidth = displayMetrics.widthPixels / displayMetrics.density / 10;
     return (int) (dpWidth);
+  }
+
+  @Override
+  public void onSuccess() {
+    Drawable drawable = moviePoster.getDrawable();
+    Bitmap bitmap = ((BitmapDrawable) drawable).getBitmap();
+    Palette.from(bitmap).generate(this);
+
+  }
+
+  @Override
+  public void onError() {
+
+  }
+
+  @Override
+  public void onGenerated(Palette palette) {
+    imageBackgorund.setBackgroundColor(palette.getDominantColor(getResources().getColor(R.color.colorAccent)));
+    int vibrantColor = palette.getVibrantColor(getResources().getColor(R.color.colorAccent));
+    floatingActionButton.setBackgroundTintList(new ColorStateList(new int[][]{new int[]{0}}, new int[]{vibrantColor}));
+
   }
 }
