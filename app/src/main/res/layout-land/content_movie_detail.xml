@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:app="http://schemas.android.com/apk/res-auto"
+  xmlns:tools="http://schemas.android.com/tools"
+  android:layout_width="match_parent"
+  android:layout_height="match_parent"
+  app:layout_behavior="@string/appbar_scrolling_view_behavior"
+  tools:context="com.android.pobla.popularmovies.detail.view.MovieDetailActivity"
+  tools:showIn="@layout/activity_movie_detail">
+
+  <android.support.constraint.Guideline
+    android:id="@+id/guideline_detail_guideline_horizontal_half"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    app:layout_constraintGuide_percent="0.5"
+    />
+
+  <View
+    android:id="@+id/imageBackground"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    app:layout_constraintEnd_toStartOf="@id/guideline_detail_guideline_horizontal_half"
+    tools:background="@color/colorPrimaryDark"
+    />
+
+  <ImageView
+    android:id="@+id/imageView_detail_moviePoster"
+    android:layout_width="wrap_content"
+    android:layout_height="0dp"
+    android:contentDescription="@string/detail_description_image_poster"
+
+    app:layout_constraintEnd_toStartOf="@+id/guideline_detail_guideline_horizontal_half"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toTopOf="parent"
+    app:layout_constraintBottom_toBottomOf="parent"
+    tools:src="@drawable/sample"/>
+
+  <TextView
+    android:id="@+id/tv_detail_releaseDate_label"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_margin="@dimen/fab_margin"
+    android:text="@string/detail_releaseDate"
+    android:textStyle="bold"
+    app:layout_constraintStart_toEndOf="@+id/imageBackground"
+    app:layout_constraintTop_toTopOf="parent"
+    tools:layout_editor_absoluteY="0dp"/>
+
+  <TextView
+    android:id="@+id/textView_detail_releaseDate"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    app:layout_constraintEnd_toEndOf="@+id/tv_detail_releaseDate_label"
+    app:layout_constraintStart_toStartOf="@id/tv_detail_releaseDate_label"
+    app:layout_constraintTop_toBottomOf="@id/tv_detail_releaseDate_label"
+    tools:text="12/12/1980"/>
+
+
+  <TextView
+    android:id="@+id/textView_detail_userRatingLabel"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_margin="@dimen/fab_margin"
+    android:text="@string/detail_userRating"
+    android:textStyle="bold"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintTop_toTopOf="parent"
+    tools:layout_editor_absoluteY="0dp"/>
+
+  <TextView
+    android:id="@+id/textView_detail_userRating"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:gravity="center"
+    app:layout_constraintEnd_toEndOf="@id/textView_detail_userRatingLabel"
+    app:layout_constraintStart_toStartOf="@+id/textView_detail_userRatingLabel"
+    app:layout_constraintTop_toBottomOf="@id/textView_detail_userRatingLabel"
+    tools:text="9.2"/>
+
+  <ScrollView
+    android:id="@+id/scrollView2"
+    android:layout_width="320dp"
+    android:layout_height="0dp"
+    android:layout_margin="@dimen/fab_margin"
+    app:layout_constraintBottom_toTopOf="@+id/button_detail_showTrailer"
+    app:layout_constraintEnd_toEndOf="@+id/textView_detail_userRatingLabel"
+    app:layout_constraintStart_toStartOf="@+id/tv_detail_releaseDate_label"
+    app:layout_constraintTop_toBottomOf="@+id/textView_detail_releaseDate"
+    >
+
+
+    <TextView
+      android:id="@+id/textView_detail_moviePlot"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_margin="@dimen/fab_margin"
+      android:scrollbars="vertical"
+      tools:text="
+      dasdasdasdasasdasdasdasdasasdasdasdasdasasdasdasdasdasasdasdasdasdasasdasdasdasdasasdasdasdasdasasdasdasdasdasasdasdasdasdasasdasdasdasdasasdasdasd
+      asdasasdasdasdasdasasdasdasdasdasasdasdasdasdasasdasdasdasdasasdasdasdasdasasdasdasdasdasasdasdasdasdasasdasdasdasdas"/>
+
+  </ScrollView>
+
+  <android.support.design.widget.FloatingActionButton
+    android:id="@+id/floatingActionButton_detail_addFav"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="@dimen/fab_margin"
+    android:layout_marginTop="@dimen/fab_margin"
+
+    android:src="@drawable/fav_checkbox"
+    app:elevation="4dp"
+    app:layout_constraintBottom_toBottomOf="parent"
+    app:layout_constraintEnd_toEndOf="@+id/imageBackground"
+    app:layout_constraintStart_toEndOf="@+id/imageBackground"
+    tools:layout_editor_absoluteY="0dp"/>
+
+  <Button
+    android:id="@+id/button_detail_showTrailer"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:text="@string/detail_showTrailer"
+    android:textAlignment="center"
+    app:layout_constraintBottom_toBottomOf="parent"
+    app:layout_constraintStart_toStartOf="@+id/tv_detail_releaseDate_label"/>
+
+  <Button
+    android:id="@+id/button_detail_showReviews"
+    android:layout_width="0dp"
+    android:layout_height="wrap_content"
+    android:text="@string/detail_showReviews"
+    android:textAlignment="center"
+    app:layout_constraintBottom_toBottomOf="parent"
+    app:layout_constraintEnd_toEndOf="@id/textView_detail_userRatingLabel"
+    />
+
+</android.support.constraint.ConstraintLayout>
+
+
+
