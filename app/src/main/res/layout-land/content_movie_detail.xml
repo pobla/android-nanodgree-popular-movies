@@ -34,8 +34,7 @@
     app:layout_constraintEnd_toStartOf="@+id/guideline_detail_guideline_horizontal_half"
     app:layout_constraintStart_toStartOf="parent"
     app:layout_constraintTop_toTopOf="parent"
-    app:layout_constraintBottom_toBottomOf="parent"
-    tools:src="@drawable/sample"/>
+    app:layout_constraintBottom_toBottomOf="parent"/>
 
   <TextView
     android:id="@+id/tv_detail_releaseDate_label"
