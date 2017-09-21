@@ -118,8 +118,10 @@ public class MainActivity extends AppCompatActivity implements MainView, MainVie
     movieGrid.setVisibility(View.VISIBLE);
     textViewNoMovies.setVisibility(View.GONE);
     mainViewAdapter.setCursor(movies);
-    movieGrid.scrollToPosition(RecyclerView.NO_POSITION);
-
+    if (movieGridState != null) {
+      movieGrid.getLayoutManager().onRestoreInstanceState(movieGridState);
+      movieGridState = null;
+    }
   }
 
   @Override
@@ -172,8 +174,8 @@ public class MainActivity extends AppCompatActivity implements MainView, MainVie
   protected void onRestoreInstanceState(Bundle savedInstanceState) {
     super.onRestoreInstanceState(savedInstanceState);
     if (savedInstanceState != null) {
-      Parcelable savedRecyclerLayoutState = savedInstanceState.getParcelable(LAYOUT_MANAGER_STATE);
-      movieGrid.getLayoutManager().onRestoreInstanceState(savedRecyclerLayoutState);
+      movieGridState = savedInstanceState.getParcelable(LAYOUT_MANAGER_STATE);
+      movieGrid.getLayoutManager().onRestoreInstanceState(movieGridState);
     }
   }
 
@@ -182,5 +184,4 @@ public class MainActivity extends AppCompatActivity implements MainView, MainVie
     float dpWidth = displayMetrics.widthPixels / displayMetrics.density;
     return (int) (dpWidth / SCALING_FACTOR);
   }
-
 }
